@@ -4,6 +4,7 @@ Basic website intended to try out Flask capatibilities..
 ## Dependencies
 - `flask`
 - `flask-wtf`
+- `flask-sqlalchemy`
 - Optional: `gunicorn`
 
 ## References:
@@ -15,7 +16,10 @@ Basic website intended to try out Flask capatibilities..
 - - [Bootstrap: Form Controls](https://getbootstrap.com/docs/5.2/forms/form-control/)
 - - [Bootstrap: Buttons](https://getbootstrap.com/docs/5.2/components/buttons/)
 - - [Bootstrap: Alerts](https://getbootstrap.com/docs/5.2/components/alerts/)
+- - [Bootstrap: Shadows](https://getbootstrap.com/docs/5.2/utilities/shadows/)
+- - [Bootstrap: Tables](https://getbootstrap.com/docs/5.2/content/tables/)
 - [WTForms Documentation](https://wtforms.readthedocs.io/en/3.0.x/)
+- [SQLAlchemy](https://www.sqlalchemy.org)
 - [Gunicorn Docs](https://gunicorn.org/#deployment)
 
 ## Notes
@@ -28,3 +32,6 @@ Basic website intended to try out Flask capatibilities..
 - - [2. Deploying Flask Application on VPS Linux Server using Nginx](https://medium.com/geekculture/deploying-flask-application-on-vps-linux-server-using-nginx-a1c4f8ff0010)
 - - List gunicorn processess: `ps ax | grep gunicorn`
 - - Kill process: `kill -9 PID`
+- To create new sqlite DB, via Python terminal:
+- - `from app import db`
+- - `db.create_all()`
