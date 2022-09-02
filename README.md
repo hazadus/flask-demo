@@ -7,7 +7,7 @@ Basic website intended to try out Flask capatibilities..
 - `flask-sqlalchemy`
 - Optional: `gunicorn`
 
-## References:
+## References
 - [CodeMy Flask Fridays YoutTube playlist](https://www.youtube.com/watch?v=0Qxtt4veJIc&list=PLCC34OHNcOtolz2Vd9ZSeSXWc8Bq23yEz&index=2)
 - [Flask Documentation](https://flask.palletsprojects.com/en/2.2.x/#)
 - - [Flask: Message Flashing](https://flask.palletsprojects.com/en/2.2.x/patterns/flashing/?highlight=flash)
@@ -35,3 +35,4 @@ Basic website intended to try out Flask capatibilities..
 - To create new sqlite DB, via Python terminal:
 - - `from app import db`
 - - `db.create_all()`
+- [CodeMy Flask Fridays #9: How to use MySQL instead of sqlite](https://youtu.be/hQl2wyJvK5k)

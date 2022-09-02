@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash
+from flask import Flask, render_template, flash, request
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, SubmitField
@@ -66,6 +66,32 @@ def add_user():
                            email=email,
                            form=form,
                            our_users=our_users)
+
+
+# Update User Record in DB
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
+def update(id):
+    form = UserForm()
+    name_to_update = Users.query.get_or_404(id)
+
+    if request.method == 'POST':
+        name_to_update.name = request.form['name']
+        name_to_update.email = request.form['email']
+        try:
+            db.session.commit()
+            flash('User updated successfully!')
+            return render_template('update.html',
+                                   form=form,
+                                   name_to_update=name_to_update)
+        except:
+            flash('Error! Looks like there was a problem, please try again.')
+            return render_template('update.html',
+                                   form=form,
+                                   name_to_update=name_to_update)
+    else:
+        return render_template('update.html',
+                               form=form,
+                               name_to_update=name_to_update)
 
 
 @app.route('/name', methods=['GET', 'POST'])
