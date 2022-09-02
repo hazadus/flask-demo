@@ -2,5 +2,12 @@
 
 {% block content %}
     <h1>Hazadus - Flask demo</h1>
-    <p>This site intended to try out Flask capatibilities.</p>
+    <img src="{{ url_for('static', filename='images/bear-in-sweater.jpg') }}"
+         width="200"
+         class="rounded float-start" alt="Bear in sweater">
+    <p>
+        This site intended to try out Flask capatibilities.
+    </p>
+
+
 {% endblock %}
