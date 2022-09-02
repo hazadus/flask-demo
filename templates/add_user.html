@@ -31,14 +31,30 @@
     {% endif %}
 
         <h2>Existing users</h2>
+        <div class="shadow-lg p-3 mb-5 bg-body rounded">
         <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Fav color</th>
+                    <th scope="col">Added</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
         {% for our_user in our_users %}
             <tr>
                 <td>{{ our_user.id }}.</td>
                 <td><a href="{{ url_for('update', id=our_user.id) }}">{{ our_user.name }}</a></td>
                 <td>{{ our_user.email }}</td>
-                <td>{{ our_user.favorite_color }}</td>
+                <td>
+                    <span class="badge rounded-pill text-bg-secondary">{{ our_user.favorite_color }}</span>
+                </td>
+                <td>{{ our_user.date_added.strftime('%d.%m.%Y %H:%M') }}</td>
             </tr>
         {% endfor %}
+            </tbody>
         </table>
+        </div>
 {% endblock %}

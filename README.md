@@ -13,6 +13,7 @@ Basic website intended to try out Flask capatibilities..
 - [Flask Documentation](https://flask.palletsprojects.com/en/2.2.x/#)
 - - [Flask: Message Flashing](https://flask.palletsprojects.com/en/2.2.x/patterns/flashing/?highlight=flash)
 - [Bootstrap Documentation](https://getbootstrap.com/docs/5.2/getting-started/introduction/)
+- [Bootstrap Cheatsheet](https://getbootstrap.com/docs/5.2/examples/cheatsheet/)
 - - [Bootstrap: Navbar](https://getbootstrap.com/docs/5.2/components/navbar/#how-it-works)
 - - [Bootstrap: Form Controls](https://getbootstrap.com/docs/5.2/forms/form-control/)
 - - [Bootstrap: Buttons](https://getbootstrap.com/docs/5.2/components/buttons/)

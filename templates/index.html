@@ -1,13 +1,45 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Hazadus - Flask demo</h1>
-    <img src="{{ url_for('static', filename='images/bear-in-sweater.jpg') }}"
-         width="200"
-         class="rounded float-start" alt="Bear in sweater">
-    <p>
-        This site intended to try out Flask capatibilities.
-    </p>
-
-
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+           <div class="card" style="width: 18rem;">
+                <img src="{{ url_for('static', filename='images/bear-in-sweater.jpg') }}"
+                     class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Meet Hazadus</h5>
+                    <p class="card-text">This demo site build to hone my coding skills.</p>
+                    <a href="#" class="btn btn-primary">About me</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+           <div class="card" style="width: 18rem;">
+                <img src="{{ url_for('static', filename='images/flask-framework-logo-svg-1251369.png') }}"
+                     class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Flask Demo</h5>
+                    <p class="card-text">This site intended to try out Flask capatibilities.</p>
+                    <a href="#" class="btn btn-primary">See more</a>
+                </div>
+            </div>
+        </div>
+            <div class="col">
+           <div class="card" style="width: 18rem;">
+                <img src="{{ url_for('static', filename='images/bootsrap-logo.png') }}"
+                     class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Bootstrap Demo</h5>
+                    <p class="card-text">
+                        This site intended to try out Bootstrap capatibilities. Check the cheatsheet to see all
+                        of its elements.
+                    </p>
+                    <a href="https://getbootstrap.com/docs/5.2/examples/cheatsheet/"
+                       class="btn btn-primary">
+                        Cheatsheet
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
