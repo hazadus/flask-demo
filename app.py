@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Length
-from datetime import datetime
+from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -161,6 +161,11 @@ def name():
     return render_template('name.html',
                            name=name,
                            form=form)
+
+
+@app.route('/date')
+def get_current_date():
+    return {"Date": date.today()}
 
 
 # Create custom Error Pages
