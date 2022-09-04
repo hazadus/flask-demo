@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {%  for message in get_flashed_messages() %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{  message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {%  endfor %}
+
+    <div class="shadow-lg p-3 mb-5 bg-body rounded">
+        <h3>{{ post.title }}</h3>
+        <i>by {{ post.author }} on {{ post.date_posted }}</i><br/><br/>
+        <p>
+            {{ post.content }}
+        </p>
+        <a class="btn btn-outline-primary btn-sm" href="{{ url_for('posts') }}"
+                   role="button">Back to all posts page</a>
+    </div>
+
+{% endblock %}

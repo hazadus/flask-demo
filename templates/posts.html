@@ -17,6 +17,8 @@
             <p>
                 {{ post.content }}
             </p>
+            <a class="btn btn-outline-primary btn-sm" href="{{ url_for('view_post', post_id=post.id) }}"
+                       role="button">View post</a>
         </div>
     {% endfor %}
 {% endblock %}

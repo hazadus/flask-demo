@@ -188,7 +188,7 @@ def add_post():
     form = PostForm()
 
     if form.validate_on_submit():
-        post = Posts(title=form.title.data, content=form.content.data, author=form.author.data, slug=form.slug.data)
+        post_ = Posts(title=form.title.data, content=form.content.data, author=form.author.data, slug=form.slug.data)
 
         # Clear the form
         form.title.data = ''
@@ -197,7 +197,7 @@ def add_post():
         form.slug.data = ''
 
         # Add post to DB
-        db.session.add(post)
+        db.session.add(post_)
         db.session.commit()
 
         flash('Blog post submitted successfully!')
@@ -210,6 +210,12 @@ def posts():
     posts_ = Posts.query.order_by(Posts.date_posted)
     return render_template('posts.html',
                            posts=posts_)
+
+
+@app.route('/posts/<int:post_id>')
+def view_post(post_id):
+    post_ = Posts.query.get_or_404(post_id)
+    return render_template('post.html', post=post_)
 
 
 @app.route('/date')
