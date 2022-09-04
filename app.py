@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -20,6 +21,18 @@ class Users(db.Model):
     email = db.Column(db.String(32), nullable=False, unique=True)
     favorite_color = db.Column(db.String(16))
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    password_hash = db.Column(db.String(64))
+
+    @property
+    def password(self):
+        raise AttributeError('Password is not a readable Attribute!')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         return '<Name %r>' % self.name

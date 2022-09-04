@@ -28,7 +28,11 @@ Basic website intended to try out Flask capatibilities..
 - To run in development mode:
 - - `export FLASK_ENV=development`
 - - `flask run`
+- We can use `flask shell` for debug purposes ([see example here](https://youtu.be/8ebIEefhBpM?t=599)).
 - To run on server:
+- - `cd /usr/projects/flask-demo`
+- - `git pull` if you need to update the code
+- - `source bin/activate`
 - - `gunicorn app:app -b localhost:8000 &` (see link 1 below for details)
 - - [1. Deploy flask app with nginx using gunicorn and supervisor](https://medium.com/ymedialabs-innovation/deploy-flask-app-with-nginx-using-gunicorn-and-supervisor-d7a93aa07c18)
 - - [2. Deploying Flask Application on VPS Linux Server using Nginx](https://medium.com/geekculture/deploying-flask-application-on-vps-linux-server-using-nginx-a1c4f8ff0010)
