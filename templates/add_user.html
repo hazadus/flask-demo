@@ -46,12 +46,18 @@
         {% for our_user in our_users %}
             <tr>
                 <td>{{ our_user.id }}.</td>
-                <td><a href="{{ url_for('update', id=our_user.id) }}">{{ our_user.name }}</a></td>
+                <td>
+                    <a href="{{ url_for('update', id=our_user.id) }}">{{ our_user.name }}</a>
+                </td>
                 <td>{{ our_user.email }}</td>
                 <td>
                     <span class="badge rounded-pill text-bg-secondary">{{ our_user.favorite_color }}</span>
                 </td>
-                <td>{{ our_user.date_added.strftime('%d.%m.%Y %H:%M') }}</td>
+                <td>
+                    {{ our_user.date_added.strftime('%d.%m.%Y %H:%M') }}
+                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete', id=our_user.id) }}"
+                       role="button">Delete</a>
+                </td>
             </tr>
         {% endfor %}
             </tbody>
