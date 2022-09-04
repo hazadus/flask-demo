@@ -79,24 +79,24 @@ def index():
 
 
 @app.route('/user/<name>')
-def user(name):
-    return render_template('user.html', user_name=name)
+def user(name_):
+    return render_template('user.html', user_name=name_)
 
 
 @app.route('/user/add', methods=['GET', 'POST'])
 def add_user():
-    name = email = None
+    name_ = email = None
     form = UserForm()
 
     if form.validate_on_submit():
-        user = Users.query.filter_by(email=form.email.data).first()  # Check if this email is already in DB
-        if user is None:
+        user_ = Users.query.filter_by(email=form.email.data).first()  # Check if this email is already in DB
+        if user_ is None:
             hashed_password = generate_password_hash(form.password_hash.data, 'sha256')
-            user = Users(name=form.name.data, email=form.email.data, favorite_color=form.favorite_color.data,
-                         password_hash=hashed_password)
-            db.session.add(user)
+            user_ = Users(name=form.name.data, email=form.email.data, favorite_color=form.favorite_color.data,
+                          password_hash=hashed_password)
+            db.session.add(user_)
             db.session.commit()
-        name = form.name.data
+        name_ = form.name.data
         form.name.data = ''
         form.email.data = ''
         form.favorite_color.data = ''
@@ -106,7 +106,7 @@ def add_user():
 
     our_users = Users.query.order_by(Users.date_added)
     return render_template('add_user.html',
-                           name=name,
+                           name=name_,
                            email=email,
                            form=form,
                            our_users=our_users)
@@ -114,14 +114,15 @@ def add_user():
 
 # Update User Record in DB
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
-def update(id):
+def update(id_):
     form = UserForm()
-    name_to_update = Users.query.get_or_404(id)
+    name_to_update = Users.query.get_or_404(id_)
 
     if request.method == 'POST':
         name_to_update.name = request.form['name']
         name_to_update.email = request.form['email']
         name_to_update.favorite_color = request.form['favorite_color']
+        # noinspection PyBroadException
         try:
             db.session.commit()
             flash('User updated successfully!')
@@ -140,26 +141,27 @@ def update(id):
 
 
 @app.route('/delete/<int:id>')
-def delete(id):
-    name = email = None
+def delete(id_):
+    name_ = email = None
     form = UserForm()
-    user_to_delete = Users.query.get_or_404(id)
+    user_to_delete = Users.query.get_or_404(id_)
     our_users = Users.query.order_by(Users.date_added)
 
+    # noinspection PyBroadException
     try:
         db.session.delete(user_to_delete)
         db.session.commit()
         flash('User deleted successfully.')
 
         return render_template('add_user.html',
-                               name=name,
+                               name=name_,
                                email=email,
                                form=form,
                                our_users=our_users)
     except:
         flash('There was a problem deleting user, please try again!')
         return render_template('add_user.html',
-                               name=name,
+                               name=name_,
                                email=email,
                                form=form,
                                our_users=our_users)
@@ -167,17 +169,17 @@ def delete(id):
 
 @app.route('/name', methods=['GET', 'POST'])
 def name():
-    name = None
+    name_ = None
     form = NamerForm()
 
     # Validate form
     if form.validate_on_submit():
-        name = form.name.data
+        name_ = form.name.data
         form.name.data = ''
         flash('Form successfully submitted.')
 
     return render_template('name.html',
-                           name=name,
+                           name=name_,
                            form=form)
 
 
