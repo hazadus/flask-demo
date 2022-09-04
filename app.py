@@ -2,8 +2,8 @@ from flask import Flask, render_template, flash, request
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
+from wtforms.validators import DataRequired, EqualTo, Length
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -21,7 +21,7 @@ class Users(db.Model):
     email = db.Column(db.String(32), nullable=False, unique=True)
     favorite_color = db.Column(db.String(16))
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
-    password_hash = db.Column(db.String(64))
+    password_hash = db.Column(db.String(128))
 
     @property
     def password(self):
@@ -48,6 +48,10 @@ class UserForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     email = StringField('E-mail', validators=[DataRequired()])
     favorite_color = StringField('Favorite Color')
+    password_hash = PasswordField('Password', validators=[DataRequired(),
+                                                          EqualTo('password_hash2',
+                                                                  message='Passwords must match!')])
+    password_hash2 = PasswordField('Confirm Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 
@@ -69,13 +73,17 @@ def add_user():
     if form.validate_on_submit():
         user = Users.query.filter_by(email=form.email.data).first()  # Check if this email is already in DB
         if user is None:
-            user = Users(name=form.name.data, email=form.email.data, favorite_color=form.favorite_color.data)
+            hashed_password = generate_password_hash(form.password_hash.data, 'sha256')
+            user = Users(name=form.name.data, email=form.email.data, favorite_color=form.favorite_color.data,
+                         password_hash=hashed_password)
             db.session.add(user)
             db.session.commit()
         name = form.name.data
         form.name.data = ''
         form.email.data = ''
         form.favorite_color.data = ''
+        form.password_hash.data = ''
+        form.password_hash2.data = ''
         flash('New user added successfully!')
 
     our_users = Users.query.order_by(Users.date_added)
