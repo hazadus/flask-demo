@@ -8,6 +8,18 @@ from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms.widgets import TextArea
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+import logging
+import sys
+
+logging.basicConfig(
+    level=logging.INFO,
+    handlers=[
+        logging.FileHandler("log.txt"),
+        logging.StreamHandler(sys.stdout)  # output to file AND console
+    ],
+    format="%(asctime)s - %(module)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s",
+    datefmt='%d/%m/%Y %H:%M:%S',
+    )
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
