@@ -5,6 +5,7 @@ Basic website intended to try out Flask capatibilities..
 - `flask`
 - `flask-wtf`
 - `flask-sqlalchemy`
+- `flask-login`
 - Optional: `Flask-Migrate`
 - Optional: `gunicorn`
 
@@ -22,6 +23,7 @@ Basic website intended to try out Flask capatibilities..
 - - [Bootstrap: Tables](https://getbootstrap.com/docs/5.2/content/tables/)
 - [WTForms Documentation](https://wtforms.readthedocs.io/en/3.0.x/)
 - [SQLAlchemy](https://www.sqlalchemy.org)
+- [Flask-login Documentation](https://flask-login.readthedocs.io/en/latest/)
 - [Gunicorn Docs](https://gunicorn.org/#deployment)
 
 ## Notes

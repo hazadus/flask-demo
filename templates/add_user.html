@@ -18,6 +18,10 @@
         <div class="shadow-lg p-3 mb-5 bg-body rounded">
             <form method="POST">
                 {{ form.hidden_tag() }}
+
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control") }}
+
                 {{ form.name.label(class="form-label") }}
                 {{ form.name(class="form-control") }}
 
@@ -44,6 +48,7 @@
             <thead>
                 <tr>
                     <th scope="col">#id</th>
+                    <th scope="col">Username</th>
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Fav color</th>
@@ -56,6 +61,9 @@
             <tr>
                 <td>{{ our_user.id }}.</td>
                 <td>
+                    @{{ our_user.username }}<br/>
+                </td>
+                <td>
                     {{ our_user.name }}<br/>
                 </td>
                 <td>{{ our_user.email }}</td>
@@ -66,9 +74,9 @@
                     {{ our_user.date_added.strftime('%d.%m.%Y %H:%M') }}
                 </td>
                 <td>
-                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update', id=our_user.id) }}"
+                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update', user_id=our_user.id) }}"
                        role="button">Edit</a>
-                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete', id=our_user.id) }}"
+                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete', user_id=our_user.id) }}"
                        role="button">Delete</a>
                 </td>
             </tr>
