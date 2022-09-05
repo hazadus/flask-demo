@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, request
+from flask import Flask, render_template, flash, request, redirect, url_for
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -216,6 +216,31 @@ def posts():
 def view_post(post_id):
     post_ = Posts.query.get_or_404(post_id)
     return render_template('post.html', post=post_)
+
+
+@app.route('/posts/edit/<int:post_id>', methods=['GET', 'POST'])
+def edit_post(post_id):
+    post_ = Posts.query.get_or_404(post_id)
+    form = PostForm()
+
+    # If post was actually edited already:
+    if form.validate_on_submit():
+        post_.title = form.title.data
+        post_.author = form.author.data
+        post_.content = form.content.data
+        post_.slug = form.slug.data
+        # Update DB
+        db.session.add(post_)  # Update DB with changed post
+        db.session.commit()
+        flash('Post has been updated successfully!')
+        return redirect(url_for('view_post', post_id=post_.id))
+
+    # Pass data to fill out the form for editing
+    form.title.data = post_.title
+    form.author.data = post_.author
+    form.slug.data = post_.slug
+    form.content.data = post_.content
+    return render_template('edit_post.html', form=form)
 
 
 @app.route('/date')

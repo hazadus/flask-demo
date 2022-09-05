@@ -15,7 +15,11 @@
             {{ post.content }}
         </p>
         <a class="btn btn-outline-primary btn-sm" href="{{ url_for('posts') }}"
-                   role="button">Back to all posts page</a>
+                   role="button">Back to all posts page
+        </a>
+         <a class="btn btn-outline-primary btn-sm" href="{{ url_for('edit_post', post_id=post.id) }}"
+                   role="button">Edit post
+        </a>
     </div>
 
 {% endblock %}
