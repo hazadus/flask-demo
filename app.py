@@ -208,8 +208,7 @@ def add_post():
 @app.route('/posts')
 def posts():
     posts_ = Posts.query.order_by(Posts.date_posted)
-    return render_template('posts.html',
-                           posts=posts_)
+    return render_template('posts.html', posts=posts_)
 
 
 @app.route('/posts/<int:post_id>')
@@ -241,6 +240,22 @@ def edit_post(post_id):
     form.slug.data = post_.slug
     form.content.data = post_.content
     return render_template('edit_post.html', form=form)
+
+
+@app.route('/posts/delete/<int:post_id>')
+def delete_post(post_id):
+    post_to_delete = Posts.query.get_or_404(post_id)
+
+    try:
+        db.session.delete(post_to_delete)
+        db.session.commit()
+        flash("Blog post was successfully deleted.")
+        posts_ = Posts.query.order_by(Posts.date_posted)
+        return render_template('posts.html', posts=posts_)
+    except:
+        flash("There was a problem deleting blog post. Please try again!")
+        posts_ = Posts.query.order_by(Posts.date_posted)
+        return render_template('posts.html', posts=posts_)
 
 
 @app.route('/date')
