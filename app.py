@@ -141,6 +141,8 @@ def logout():
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required  # Redirect to Login page if user is not logged in
 def dashboard() -> str:
+    # TODO: move update profile stuff here.
+    # Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
     return render_template('dashboard.html')
 
 
@@ -341,7 +343,7 @@ def get_current_date():
 
 
 # Create custom Error Pages
-# Invalid IRL
+# Invalid URL
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404

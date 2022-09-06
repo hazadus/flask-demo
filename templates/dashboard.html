@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+<!--
+Skipped: move update profile stuff here too.
+Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
+-->
 
 {% block content %}
     {%  for message in get_flashed_messages() %}
@@ -18,23 +22,39 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ current_user.name }}</h5>
                     <p class="card-text">
-                        @{{ current_user.username }}<br/>
-                        {{ current_user.email }}<br/>
-                        {{ current_user.favorite_color }}<br/>
-                        {{ current_user.date_added }}
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-8">
+                                    @{{ current_user.username }}<br/>
+                                    <a href="mailto:{{ current_user.email }}">{{ current_user.email }}</a><br/>
+                                    {{ current_user.favorite_color }}<br/>
+                                    {{ current_user.date_added }}<br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('logout') }}" role="button">
+                                        Log out
+                                    </a>
+                                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update', user_id=current_user.id) }}"
+                                       role="button">
+                                        Edit profile
+                                    </a>
+                                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete', user_id=current_user.id) }}"
+                                       role="button">
+                                        Delete
+                                    </a>
+                                </div>
+                                <div class="col-4">
+                                    <img src="{{ url_for('static', filename='images/default-profile-pic.png') }}"
+                                        height="200" width="200" align="right">
+                                </div>
+                            </div>
+                        </div>
                     </p>
-                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('logout') }}" role="button">
-                        Log out
-                    </a>
-                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update', user_id=current_user.id) }}"
-                       role="button">
-                        Edit profile
-                    </a>
-                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete', user_id=current_user.id) }}"
-                       role="button">
-                        Delete
-                    </a>
-                 </div>
+                </div>
             </div>
         </div>
 {% endblock %}
