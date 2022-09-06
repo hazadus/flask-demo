@@ -11,9 +11,30 @@
         <h2>Dashboard</h2>
         <br/>
         <div class="shadow-lg p-3 mb-5 bg-body rounded">
-            <p>You are now logged in!</p>
-            <a class="btn btn-outline-danger btn-sm" href="{{ url_for('logout') }}" role="button">
-            Log out
-            </a>
+            <div class="card">
+                <div class="card-header">
+                    User id#{{ current_user.id }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ current_user.name }}</h5>
+                    <p class="card-text">
+                        @{{ current_user.username }}<br/>
+                        {{ current_user.email }}<br/>
+                        {{ current_user.favorite_color }}<br/>
+                        {{ current_user.date_added }}
+                    </p>
+                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('logout') }}" role="button">
+                        Log out
+                    </a>
+                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update', user_id=current_user.id) }}"
+                       role="button">
+                        Edit profile
+                    </a>
+                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete', user_id=current_user.id) }}"
+                       role="button">
+                        Delete
+                    </a>
+                 </div>
+            </div>
         </div>
 {% endblock %}

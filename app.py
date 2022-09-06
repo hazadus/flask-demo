@@ -11,16 +11,17 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, log
 import logging
 import sys
 
-logging.basicConfig(
-    level=logging.INFO,
-    handlers=[
-        logging.FileHandler("log.txt"),
-        logging.StreamHandler(sys.stdout)  # output to file AND console
-    ],
-    format="%(asctime)s - %(module)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s",
-    datefmt='%d/%m/%Y %H:%M:%S',
-    )
+# Configure logger
+logging.basicConfig(level=logging.INFO,
+                    handlers=[
+                        logging.FileHandler("log.txt"),
+                        logging.StreamHandler(sys.stdout)  # output to file AND console
+                    ],
+                    format="%(asctime)s - %(module)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s",
+                    datefmt='%d/%m/%Y %H:%M:%S',
+                    )
 
+# Configure Flask app
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SECRET_KEY'] = "my key for CSRF"  # TODO: exlude this from git!
@@ -28,7 +29,6 @@ app.config['SECRET_KEY'] = "my key for CSRF"  # TODO: exlude this from git!
 # Init database
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
 
 # Flask-login stuff
 login_manager = LoginManager()
@@ -185,6 +185,7 @@ def add_user():
 
 # Update User Record in DB
 @app.route('/update/<int:user_id>', methods=['GET', 'POST'])
+@login_required  # Redirect to Login page if user is not logged in
 def update(user_id):  # TODO: rename to 'update_user'
     form = UserForm()
     name_to_update = Users.query.get_or_404(user_id)
@@ -212,6 +213,7 @@ def update(user_id):  # TODO: rename to 'update_user'
 
 
 @app.route('/delete/<int:user_id>')
+@login_required  # Redirect to Login page if user is not logged in
 def delete(user_id):  # TODO: rename to 'delete_user'
     name_ = email = None
     form = UserForm()
@@ -255,6 +257,7 @@ def name():  # TODO: remove?
 
 
 @app.route('/add-post', methods=['GET', 'POST'])
+@login_required  # Redirect to Login page if user is not logged in
 def add_post():
     form = PostForm()
 
@@ -289,6 +292,7 @@ def view_post(post_id):
 
 
 @app.route('/posts/edit/<int:post_id>', methods=['GET', 'POST'])
+@login_required  # Redirect to Login page if user is not logged in
 def edit_post(post_id):
     post_ = Posts.query.get_or_404(post_id)
     form = PostForm()
@@ -314,6 +318,7 @@ def edit_post(post_id):
 
 
 @app.route('/posts/delete/<int:post_id>')
+@login_required  # Redirect to Login page if user is not logged in
 def delete_post(post_id):
     post_to_delete = Posts.query.get_or_404(post_id)
 
