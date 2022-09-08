@@ -1,3 +1,12 @@
+"""
+Boilerplate Flask Web Blog
+
+Written by Hazadus for test and learning purposes.
+"""
+
+import logging
+import sys
+
 from flask import Flask, render_template, flash, request, redirect, url_for
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
@@ -8,8 +17,6 @@ from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms.widgets import TextArea
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-import logging
-import sys
 
 # Configure logger
 logging.basicConfig(level=logging.INFO,
@@ -43,6 +50,7 @@ def load_user(user_id):
 
 # Create DB Model
 class Users(db.Model, UserMixin):
+    """Users DB table model."""
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), nullable=False, unique=True)
     name = db.Column(db.String(64), nullable=False)
@@ -67,6 +75,7 @@ class Users(db.Model, UserMixin):
 
 
 class Posts(db.Model):
+    """Blog post DB table model"""
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128))
     content = db.Column(db.Text)
@@ -77,6 +86,7 @@ class Posts(db.Model):
 
 # Create Form Classes
 class PostForm(FlaskForm):
+    """Used to create new blog post, or edit existing."""
     title = StringField('Title', validators=[DataRequired()])
     content = StringField('Content', validators=[DataRequired()], widget=TextArea())
     author = StringField('Author', validators=[DataRequired()])
@@ -85,6 +95,7 @@ class PostForm(FlaskForm):
 
 
 class UserForm(FlaskForm):
+    """Used to sign up a new user, or edit an existing one."""
     username = StringField('Username', validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
     email = StringField('E-mail', validators=[DataRequired()])
@@ -142,7 +153,7 @@ def dashboard() -> str:
 
 
 @app.route('/user/add', methods=['GET', 'POST'])
-def add_user():
+def add_user() -> str:
     name = email = None
     form = UserForm()
 
@@ -175,10 +186,10 @@ def add_user():
                            our_users=our_users)
 
 
-# Update User Record in DB
 @app.route('/update/<int:user_id>', methods=['GET', 'POST'])
 @login_required  # Redirect to Login page if user is not logged in
-def update_user(user_id):
+def update_user(user_id: int) -> str:
+    """Update user record in DB after editing."""
     form = UserForm()
     name_to_update = Users.query.get_or_404(user_id)
 
@@ -206,7 +217,7 @@ def update_user(user_id):
 
 @app.route('/delete/<int:user_id>')
 @login_required  # Redirect to Login page if user is not logged in
-def delete_user(user_id):
+def delete_user(user_id: int) -> str:
     name = email = None
     form = UserForm()
     user_to_delete = Users.query.get_or_404(user_id)
@@ -234,11 +245,12 @@ def delete_user(user_id):
 
 @app.route('/add-post', methods=['GET', 'POST'])
 @login_required  # Redirect to Login page if user is not logged in
-def add_post():
+def add_post() -> str:
+    """Show or process 'Add post' page."""
     form = PostForm()
 
     if form.validate_on_submit():
-        post_ = Posts(title=form.title.data, content=form.content.data, author=form.author.data, slug=form.slug.data)
+        post = Posts(title=form.title.data, content=form.content.data, author=form.author.data, slug=form.slug.data)
 
         # Clear the form
         form.title.data = ''
@@ -247,7 +259,7 @@ def add_post():
         form.slug.data = ''
 
         # Add post to DB
-        db.session.add(post_)
+        db.session.add(post)
         db.session.commit()
 
         flash('Blog post submitted successfully!')
@@ -256,20 +268,21 @@ def add_post():
 
 
 @app.route('/posts')
-def view_all_posts():
-    posts_ = Posts.query.order_by(Posts.date_posted)
-    return render_template('posts.html', posts=posts_)
+def view_all_posts() -> str:
+    """Show 'All posts' section."""
+    posts = Posts.query.order_by(Posts.date_posted)
+    return render_template('posts.html', posts=posts)
 
 
 @app.route('/posts/<int:post_id>')
-def view_post(post_id):
+def view_post(post_id: int) -> str:
     post = Posts.query.get_or_404(post_id)
     return render_template('post.html', post=post)
 
 
 @app.route('/posts/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required  # Redirect to Login page if user is not logged in
-def edit_post(post_id):
+def edit_post(post_id: int):
     post = Posts.query.get_or_404(post_id)
     form = PostForm()
 
@@ -295,7 +308,7 @@ def edit_post(post_id):
 
 @app.route('/posts/delete/<int:post_id>')
 @login_required  # Redirect to Login page if user is not logged in
-def delete_post(post_id):
+def delete_post(post_id: int) -> str:
     post_to_delete = Posts.query.get_or_404(post_id)
 
     # noinspection PyBroadException
@@ -312,7 +325,8 @@ def delete_post(post_id):
 
 
 @app.route('/date')
-def get_current_date():
+def get_current_date() -> dict:
+    """Sample JSON API implementation for test purposes."""
     return {"Date": date.today()}
 
 
