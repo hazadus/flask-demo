@@ -290,22 +290,26 @@ def edit_post(post_id: int):
     post = Posts.query.get_or_404(post_id)
     form = PostForm()
 
-    # If post was actually edited already:
-    if form.validate_on_submit():
-        post.title = form.title.data
-        post.content = form.content.data
-        post.slug = form.slug.data
-        # Update DB
-        db.session.add(post)  # Update DB with changed post
-        db.session.commit()
-        flash('Post has been updated successfully!')
-        return redirect(url_for('view_post', post_id=post.id))
+    if post.author.id == current_user.id:
+        # If post was actually edited already:
+        if form.validate_on_submit():
+            post.title = form.title.data
+            post.content = form.content.data
+            post.slug = form.slug.data
+            # Update DB
+            db.session.add(post)  # Update DB with changed post
+            db.session.commit()
+            flash('Post has been updated successfully!')
+            return redirect(url_for('view_post', post_id=post.id))
 
-    # Pass data to fill out the form for editing
-    form.title.data = post.title
-    form.slug.data = post.slug
-    form.content.data = post.content
-    return render_template('edit_post.html', form=form)
+        # Pass data to fill out the form for editing
+        form.title.data = post.title
+        form.slug.data = post.slug
+        form.content.data = post.content
+        return render_template('edit_post.html', form=form)
+    else:
+        flash("Can't edit other user's posts, sorry.")
+        return redirect(url_for('view_post', post_id=post.id))
 
 
 @app.route('/posts/delete/<int:post_id>')
@@ -313,15 +317,20 @@ def edit_post(post_id: int):
 def delete_post(post_id: int) -> str:
     post_to_delete = Posts.query.get_or_404(post_id)
 
-    # noinspection PyBroadException
-    try:
-        db.session.delete(post_to_delete)
-        db.session.commit()
-        flash("Blog post was successfully deleted.")
-        posts = Posts.query.order_by(Posts.date_posted)
-        return render_template('posts.html', posts=posts)
-    except:
-        flash("There was a problem deleting blog post. Please try again!")
+    if post_to_delete.author.id == current_user.id:
+        # noinspection PyBroadException
+        try:
+            db.session.delete(post_to_delete)
+            db.session.commit()
+            flash("Blog post was successfully deleted.")
+            posts = Posts.query.order_by(Posts.date_posted)
+            return render_template('posts.html', posts=posts)
+        except:
+            flash("There was a problem deleting blog post. Please try again!")
+            posts = Posts.query.order_by(Posts.date_posted)
+            return render_template('posts.html', posts=posts)
+    else:
+        flash("Can't delete other user's post.")
         posts = Posts.query.order_by(Posts.date_posted)
         return render_template('posts.html', posts=posts)
 

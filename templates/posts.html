@@ -21,6 +21,7 @@
                 View post
             </a>
             {% if current_user.is_authenticated %}
+                {% if post.author.id == current_user.id %}
                 <a class="btn btn-outline-primary btn-sm" href="{{ url_for('edit_post', post_id=post.id) }}"  role="button">
                     Edit post
                 </a>
@@ -28,6 +29,7 @@
                    role="button">
                     Delete post
                 </a>
+                {% endif %}
             {% endif %}
         </div>
     {% endfor %}
