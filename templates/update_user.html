@@ -8,24 +8,26 @@
         </div>
     {%  endfor %}
 
-    {% if name %}
-        <h1>Updated user {{ name }}!</h1>
-        <br/>
-    {% else %}
+    {% if user_to_update.id == current_user.id %}
         <h1>Update user record</h1>
         <br/>
         <div class="shadow-lg p-3 mb-5 bg-body rounded">
-            <form action="/update/{{ name_to_update.id }}" method="POST">
+            <form action="/update/{{ user_to_update.id }}" method="POST">
                 {{ form.hidden_tag() }}
                 {{ form.name.label(class="form-label") }}
-                {{ form.name(class="form-control", value=name_to_update.name) }}
+                {{ form.name(class="form-control", value=user_to_update.name) }}
                 {{ form.email.label(class="form-label") }}
-                {{ form.email(class="form-control", value=name_to_update.email) }}
+                {{ form.email(class="form-control", value=user_to_update.email) }}
                 {{ form.favorite_color.label(class="form-label") }}
-                {{ form.favorite_color(class="form-control", value=name_to_update.favorite_color) }}
+                {{ form.favorite_color(class="form-control", value=user_to_update.favorite_color) }}
             <br/>
                 {{ form.submit(class="btn btn-primary") }}
             </form>
+        </div>
+    {% else %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            Error - you can't edit someone else's profile!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     {% endif %}
 {% endblock %}

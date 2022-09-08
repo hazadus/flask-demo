@@ -191,28 +191,28 @@ def add_user() -> str:
 def update_user(user_id: int) -> str:
     """Update user record in DB after editing."""
     form = UserForm()
-    name_to_update = Users.query.get_or_404(user_id)
+    user_to_update = Users.query.get_or_404(user_id)
 
     if request.method == 'POST':
-        name_to_update.name = request.form['name']
-        name_to_update.email = request.form['email']
-        name_to_update.favorite_color = request.form['favorite_color']
+        user_to_update.name = request.form['name']
+        user_to_update.email = request.form['email']
+        user_to_update.favorite_color = request.form['favorite_color']
         # noinspection PyBroadException
         try:
             db.session.commit()
             flash('User updated successfully!')
             return render_template('update_user.html',
                                    form=form,
-                                   name_to_update=name_to_update)
+                                   user_to_update=user_to_update)
         except:
             flash('Error! Looks like there was a problem, please try again.')
             return render_template('update_user.html',
                                    form=form,
-                                   name_to_update=name_to_update)
+                                   user_to_update=user_to_update)
     else:
         return render_template('update_user.html',
                                form=form,
-                               name_to_update=name_to_update)
+                               user_to_update=user_to_update)
 
 
 @app.route('/delete/<int:user_id>')
