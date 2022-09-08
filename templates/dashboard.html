@@ -38,11 +38,11 @@ Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
                                     <a class="btn btn-outline-danger btn-sm" href="{{ url_for('logout') }}" role="button">
                                         Log out
                                     </a>
-                                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update', user_id=current_user.id) }}"
+                                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update_user', user_id=current_user.id) }}"
                                        role="button">
                                         Edit profile
                                     </a>
-                                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete', user_id=current_user.id) }}"
+                                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_user', user_id=current_user.id) }}"
                                        role="button">
                                         Delete
                                     </a>

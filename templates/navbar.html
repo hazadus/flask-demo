@@ -13,14 +13,6 @@
                 <li class="nav-item">
                   <a class="nav-link" aria-current="page" href="{{ url_for('index') }}">Home</a>
                 </li>
-              <!--
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('view_user', user_name='Hazadus') }}">Profile</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('name') }}">Name</a>
-                </li>
-                -->
                   {% if current_user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
@@ -37,7 +29,7 @@
                     </li>
                   {% endif %}
                 <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('posts') }}">Posts</a>
+                  <a class="nav-link" href="{{ url_for('view_all_posts') }}">Posts</a>
                 </li>
               </ul>
               <form class="d-flex" role="search">

@@ -74,9 +74,9 @@
                     {{ our_user.date_added.strftime('%d.%m.%Y %H:%M') }}
                 </td>
                 <td>
-                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update', user_id=our_user.id) }}"
+                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update_user', user_id=our_user.id) }}"
                        role="button">Edit</a>
-                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete', user_id=our_user.id) }}"
+                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_user', user_id=our_user.id) }}"
                        role="button">Delete</a>
                 </td>
             </tr>

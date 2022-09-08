@@ -84,11 +84,6 @@ class PostForm(FlaskForm):
     submit = SubmitField('Submit post')
 
 
-class NamerForm(FlaskForm):
-    name = StringField('Whatcha name', validators=[DataRequired()])
-    submit = SubmitField('Submit')
-
-
 class UserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
@@ -146,28 +141,23 @@ def dashboard() -> str:
     return render_template('dashboard.html')
 
 
-@app.route('/user/<user_name>')
-def view_user(user_name):  # TODO: remove from project? It's useless now.
-    return render_template('user.html', user_name=user_name)
-
-
 @app.route('/user/add', methods=['GET', 'POST'])
 def add_user():
-    name_ = email = None
+    name = email = None
     form = UserForm()
 
     if form.validate_on_submit():
-        user_ = Users.query.filter_by(email=form.email.data).first()  # Check if this email is already in DB
-        if user_ is None:
+        user = Users.query.filter_by(email=form.email.data).first()  # Check if this email is already in DB
+        if user is None:
             hashed_password = generate_password_hash(form.password_hash.data, 'sha256')
-            user_ = Users(username=form.username.data,
-                          name=form.name.data,
-                          email=form.email.data,
-                          favorite_color=form.favorite_color.data,
-                          password_hash=hashed_password)
-            db.session.add(user_)
+            user = Users(username=form.username.data,
+                         name=form.name.data,
+                         email=form.email.data,
+                         favorite_color=form.favorite_color.data,
+                         password_hash=hashed_password)
+            db.session.add(user)
             db.session.commit()
-        name_ = form.name.data
+        name = form.name.data
         # Clear out the form
         form.username.data = ''
         form.name.data = ''
@@ -179,7 +169,7 @@ def add_user():
 
     our_users = Users.query.order_by(Users.date_added)
     return render_template('add_user.html',
-                           name=name_,
+                           name=name,
                            email=email,
                            form=form,
                            our_users=our_users)
@@ -188,7 +178,7 @@ def add_user():
 # Update User Record in DB
 @app.route('/update/<int:user_id>', methods=['GET', 'POST'])
 @login_required  # Redirect to Login page if user is not logged in
-def update(user_id):  # TODO: rename to 'update_user'
+def update_user(user_id):
     form = UserForm()
     name_to_update = Users.query.get_or_404(user_id)
 
@@ -200,24 +190,24 @@ def update(user_id):  # TODO: rename to 'update_user'
         try:
             db.session.commit()
             flash('User updated successfully!')
-            return render_template('update.html',
+            return render_template('update_user.html',
                                    form=form,
                                    name_to_update=name_to_update)
         except:
             flash('Error! Looks like there was a problem, please try again.')
-            return render_template('update.html',
+            return render_template('update_user.html',
                                    form=form,
                                    name_to_update=name_to_update)
     else:
-        return render_template('update.html',
+        return render_template('update_user.html',
                                form=form,
                                name_to_update=name_to_update)
 
 
 @app.route('/delete/<int:user_id>')
 @login_required  # Redirect to Login page if user is not logged in
-def delete(user_id):  # TODO: rename to 'delete_user'
-    name_ = email = None
+def delete_user(user_id):
+    name = email = None
     form = UserForm()
     user_to_delete = Users.query.get_or_404(user_id)
     our_users = Users.query.order_by(Users.date_added)
@@ -229,33 +219,17 @@ def delete(user_id):  # TODO: rename to 'delete_user'
         flash('User deleted successfully.')
 
         return render_template('add_user.html',
-                               name=name_,
+                               name=name,
                                email=email,
                                form=form,
                                our_users=our_users)
     except:
         flash('There was a problem deleting user, please try again!')
         return render_template('add_user.html',
-                               name=name_,
+                               name=name,
                                email=email,
                                form=form,
                                our_users=our_users)
-
-
-@app.route('/name', methods=['GET', 'POST'])
-def name():  # TODO: remove?
-    name_ = None
-    form = NamerForm()
-
-    # Validate form
-    if form.validate_on_submit():
-        name_ = form.name.data
-        form.name.data = ''
-        flash('Form successfully submitted.')
-
-    return render_template('name.html',
-                           name=name_,
-                           form=form)
 
 
 @app.route('/add-post', methods=['GET', 'POST'])
@@ -282,40 +256,40 @@ def add_post():
 
 
 @app.route('/posts')
-def posts():  # TODO: rename to say 'view_all_posts'?
+def view_all_posts():
     posts_ = Posts.query.order_by(Posts.date_posted)
     return render_template('posts.html', posts=posts_)
 
 
 @app.route('/posts/<int:post_id>')
 def view_post(post_id):
-    post_ = Posts.query.get_or_404(post_id)
-    return render_template('post.html', post=post_)
+    post = Posts.query.get_or_404(post_id)
+    return render_template('post.html', post=post)
 
 
 @app.route('/posts/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required  # Redirect to Login page if user is not logged in
 def edit_post(post_id):
-    post_ = Posts.query.get_or_404(post_id)
+    post = Posts.query.get_or_404(post_id)
     form = PostForm()
 
     # If post was actually edited already:
     if form.validate_on_submit():
-        post_.title = form.title.data
-        post_.author = form.author.data
-        post_.content = form.content.data
-        post_.slug = form.slug.data
+        post.title = form.title.data
+        post.author = form.author.data
+        post.content = form.content.data
+        post.slug = form.slug.data
         # Update DB
-        db.session.add(post_)  # Update DB with changed post
+        db.session.add(post)  # Update DB with changed post
         db.session.commit()
         flash('Post has been updated successfully!')
-        return redirect(url_for('view_post', post_id=post_.id))
+        return redirect(url_for('view_post', post_id=post.id))
 
     # Pass data to fill out the form for editing
-    form.title.data = post_.title
-    form.author.data = post_.author
-    form.slug.data = post_.slug
-    form.content.data = post_.content
+    form.title.data = post.title
+    form.author.data = post.author
+    form.slug.data = post.slug
+    form.content.data = post.content
     return render_template('edit_post.html', form=form)
 
 
@@ -329,12 +303,12 @@ def delete_post(post_id):
         db.session.delete(post_to_delete)
         db.session.commit()
         flash("Blog post was successfully deleted.")
-        posts_ = Posts.query.order_by(Posts.date_posted)
-        return render_template('posts.html', posts=posts_)
+        posts = Posts.query.order_by(Posts.date_posted)
+        return render_template('posts.html', posts=posts)
     except:
         flash("There was a problem deleting blog post. Please try again!")
-        posts_ = Posts.query.order_by(Posts.date_posted)
-        return render_template('posts.html', posts=posts_)
+        posts = Posts.query.order_by(Posts.date_posted)
+        return render_template('posts.html', posts=posts)
 
 
 @app.route('/date')
