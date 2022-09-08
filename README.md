@@ -1,5 +1,5 @@
 # flask-demo
-Basic website intended to try out Flask capatibilities..
+Basic web blog intended to try out Flask capatibilities..
 
 ## Dependencies
 - `flask`
@@ -45,6 +45,7 @@ Basic website intended to try out Flask capatibilities..
 - - `db.create_all()`
 - [CodeMy Flask Fridays #9: How to use MySQL instead of sqlite](https://youtu.be/hQl2wyJvK5k)
 - After adding a new column to existing DB table, we need to do the "migrate" thing. To do so, in terminal (in venv, of course):
-- - `flask db init`
+- - `flask db init` (not sure it is needed?)
 - - `flask db migrate -m 'Initial migration'`
 - - `flask db upgrade`
+- - in case of error, try `flask db stamp head` before `migrate` command.

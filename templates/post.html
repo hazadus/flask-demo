@@ -10,7 +10,7 @@
 
     <div class="shadow-lg p-3 mb-5 bg-body rounded">
         <h3>{{ post.title }}</h3>
-        <i>by {{ post.author }} on {{ post.date_posted }}</i><br/><br/>
+        <i>by {{ post.author.name }} on {{ post.date_posted }}</i><br/><br/>
         <p>
             {{ post.content }}
         </p>

@@ -30,7 +30,7 @@ logging.basicConfig(level=logging.INFO,
 
 # Configure Flask app
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog_data.db'
 app.config['SECRET_KEY'] = "my key for CSRF"  # TODO: exlude this from git!
 
 # Init database
@@ -58,6 +58,8 @@ class Users(db.Model, UserMixin):
     favorite_color = db.Column(db.String(16))
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     password_hash = db.Column(db.String(128))
+    # User can have many posts
+    posts = db.relationship('Posts', backref='author')  # Usage from Jinja: {{ post.author.name }}
 
     @property
     def password(self):
@@ -79,9 +81,10 @@ class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128))
     content = db.Column(db.Text)
-    author = db.Column(db.String(128))
     slug = db.Column(db.String(256))
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    # Foreign key to link users (refer to primary key of the user)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
 # Create Form Classes
@@ -89,7 +92,6 @@ class PostForm(FlaskForm):
     """Used to create new blog post, or edit existing."""
     title = StringField('Title', validators=[DataRequired()])
     content = StringField('Content', validators=[DataRequired()], widget=TextArea())
-    author = StringField('Author', validators=[DataRequired()])
     slug = StringField('Slug', validators=[DataRequired()])
     submit = SubmitField('Submit post')
 
@@ -250,12 +252,14 @@ def add_post() -> str:
     form = PostForm()
 
     if form.validate_on_submit():
-        post = Posts(title=form.title.data, content=form.content.data, author=form.author.data, slug=form.slug.data)
+        post = Posts(title=form.title.data,
+                     content=form.content.data,
+                     author_id=current_user.id,  # make relationship with currently logged in user as author
+                     slug=form.slug.data)
 
         # Clear the form
         form.title.data = ''
         form.content.data = ''
-        form.author.data = ''
         form.slug.data = ''
 
         # Add post to DB
@@ -289,7 +293,6 @@ def edit_post(post_id: int):
     # If post was actually edited already:
     if form.validate_on_submit():
         post.title = form.title.data
-        post.author = form.author.data
         post.content = form.content.data
         post.slug = form.slug.data
         # Update DB
@@ -300,7 +303,6 @@ def edit_post(post_id: int):
 
     # Pass data to fill out the form for editing
     form.title.data = post.title
-    form.author.data = post.author
     form.slug.data = post.slug
     form.content.data = post.content
     return render_template('edit_post.html', form=form)
