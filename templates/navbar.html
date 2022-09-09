@@ -32,8 +32,10 @@
                   <a class="nav-link" href="{{ url_for('view_all_posts') }}">Posts</a>
                 </li>
               </ul>
-              <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+              <form class="d-flex" role="search" method="POST" action="{{ url_for('search') }}">
+                  {{ form.hidden_tag() }}
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                       name="search_query">
                 <button class="btn btn-outline-success" type="submit">Search</button>
               </form>
             </div>
