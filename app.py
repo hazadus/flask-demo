@@ -221,7 +221,7 @@ def search():  # TODO: validate data required
 def dashboard() -> str:
     # TODO: move update profile stuff here.
     # Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
-    posts = Posts.query.filter(Posts.author_id == current_user.id).order_by(Posts.date_posted)
+    posts = Posts.query.filter(Posts.author_id == current_user.id).order_by(Posts.date_posted.desc())
     return render_template('dashboard.html', posts=posts)
 
 

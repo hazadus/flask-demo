@@ -87,7 +87,7 @@ Initializing database after installation:
 from app import db
 db.create_all()
 ```
-Then, create admin user:
+Then, create admin user ([more in docs](https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/)):
 ```python
 from app import Users
 from werkzeug.security import generate_password_hash

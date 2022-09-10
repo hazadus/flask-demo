@@ -31,8 +31,7 @@ Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
                                     <b>@{{ current_user.username }}</b><br/>
                                     <a href="mailto:{{ current_user.email }}">{{ current_user.email }}</a><br/>
                                     {{ current_user.favorite_color }}<br/>
-                                    <b>Joined on:</b> {{ current_user.date_added }}<br/>
-                                    <b>Profile pic:</b> {{ current_user.profile_pic }}
+                                    <b>Joined on:</b> {{ current_user.date_added.strftime('%d %b %Y, %H:%M') }}<br/>
                                     <br/>
                                     <br/>
                                     <br/>
@@ -89,16 +88,16 @@ Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
                                 <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
                             </td>
                             <td>
-                                {{ post.date_posted }}
+                                {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
                             </td>
                             <td>
                                  <a class="btn btn-outline-primary btn-sm" href="{{ url_for('edit_post', post_id=post.id) }}"
                                            role="button">
-                                     Edit post
+                                     Edit
                                 </a>
                                  <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_post', post_id=post.id) }}"
                                            role="button">
-                                     Delete post
+                                     Delete
                                 </a>
                             </td>
                         </tr>
