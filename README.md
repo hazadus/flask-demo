@@ -46,12 +46,27 @@ Basic web blog intended to try out Flask capatibilities..
 - - [2. Deploying Flask Application on VPS Linux Server using Nginx](https://medium.com/geekculture/deploying-flask-application-on-vps-linux-server-using-nginx-a1c4f8ff0010)
 - - List gunicorn processess: `ps ax | grep gunicorn`
 - - Kill process: `kill -9 PID`
-- To create new sqlite DB, via Python terminal:
-- - `from app import db`
-- - `db.create_all()`
 - [CodeMy Flask Fridays #9: How to use MySQL instead of sqlite](https://youtu.be/hQl2wyJvK5k)
-- After adding a new column to existing DB table, we need to do the "migrate" thing. To do so, in terminal (in venv, of course):
-- - `flask db init` (not sure it is needed?)
-- - `flask db migrate -m 'Initial migration'`
-- - `flask db upgrade`
-- - in case of error, try `flask db stamp head` before `migrate` command.
+
+## Working with database
+Initializing database after installation:
+```python
+from app import db
+db.create_all()
+```
+Then, create admin user:
+```python
+from app import Users
+from werkzeug.security import generate_password_hash
+password_hash = generate_password_hash('12345678', 'sha256')
+admin = Users(username='hazadus', name='Alexander Goldovsky', email='hazadus7@gmail.com', is_admin=True, password_hash=password_hash)
+db.session.add(admin)
+db.session.commit()
+```
+After adding a new column to existing DB table, we need to do the "migrate" thing. To do so, in terminal (in venv, of course):
+```
+flask db init
+flask db stamp head
+flask db migrate -m 'Initial migration'
+flask db upgrade
+```

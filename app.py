@@ -16,7 +16,6 @@ from flask_ckeditor import CKEditor
 from flask_ckeditor import CKEditorField
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Length
-from wtforms.widgets import TextArea
 from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 import sentry_sdk
@@ -77,6 +76,7 @@ class Users(db.Model, UserMixin):
     username = db.Column(db.String(32), nullable=False, unique=True)
     name = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(32), nullable=False, unique=True)
+    is_admin = db.Column(db.Boolean, default=False)
     favorite_color = db.Column(db.String(16))
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     password_hash = db.Column(db.String(128))
@@ -98,7 +98,7 @@ class Users(db.Model, UserMixin):
         return '<Name %r>' % self.name
 
 
-class Posts(db.Model):
+class Posts(db.Model):  # TODO: add 'is_draft' field
     """Blog post DB table model"""
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128))
@@ -155,7 +155,15 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/admin')
+@login_required
+def admin():
+    all_users = Users.query.order_by(Users.date_added)
+    return render_template('admin.html', all_users=all_users)
+
+
 @app.route('/debug-sentry')
+@login_required
 def trigger_error():
     return 1 / 0
 
@@ -204,7 +212,8 @@ def search():  # TODO: validate data required
 def dashboard() -> str:
     # TODO: move update profile stuff here.
     # Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
-    return render_template('dashboard.html')
+    posts = Posts.query.filter(Posts.author_id == current_user.id).order_by(Posts.date_posted)
+    return render_template('dashboard.html', posts=posts)
 
 
 @app.route('/user/add', methods=['GET', 'POST'])
@@ -233,12 +242,10 @@ def add_user() -> str:
         form.password_hash2.data = ''
         flash('New user added successfully!')
 
-    our_users = Users.query.order_by(Users.date_added)
     return render_template('add_user.html',
                            name=name,
                            email=email,
-                           form=form,
-                           our_users=our_users)
+                           form=form)
 
 
 @app.route('/update/<int:user_id>', methods=['GET', 'POST'])
@@ -248,7 +255,7 @@ def update_user(user_id: int) -> str:
     form = UserForm()
     user_to_update = Users.query.get_or_404(user_id)
 
-    if request.method == 'POST':
+    if request.method == 'POST':  # TODO: add check if it is correct user posting, or an admin
         user_to_update.name = request.form['name']
         user_to_update.email = request.form['email']
         user_to_update.favorite_color = request.form['favorite_color']
@@ -273,29 +280,23 @@ def update_user(user_id: int) -> str:
 @app.route('/delete/<int:user_id>')
 @login_required  # Redirect to Login page if user is not logged in
 def delete_user(user_id: int) -> str:
-    name = email = None
-    form = UserForm()
     user_to_delete = Users.query.get_or_404(user_id)
-    our_users = Users.query.order_by(Users.date_added)
+    all_users = Users.query.order_by(Users.date_added)
 
-    # noinspection PyBroadException
-    try:
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        flash('User deleted successfully.')
+    if current_user.is_admin:
+        # noinspection PyBroadException
+        try:
+            db.session.delete(user_to_delete)
+            db.session.commit()
+            flash('User deleted successfully.')
 
-        return render_template('add_user.html',
-                               name=name,
-                               email=email,
-                               form=form,
-                               our_users=our_users)
-    except:
-        flash('There was a problem deleting user, please try again!')
-        return render_template('add_user.html',
-                               name=name,
-                               email=email,
-                               form=form,
-                               our_users=our_users)
+            return render_template('admin.html', all_users=all_users)
+        except:
+            flash('There was a problem deleting user, please try again!')
+            return render_template('admin.html', all_users=all_users)
+    else:
+        flash('Only admins can delete user accounts!')
+        return render_template('dashboard.html')
 
 
 @app.route('/add-post', methods=['GET', 'POST'])
@@ -343,7 +344,7 @@ def edit_post(post_id: int):
     post = Posts.query.get_or_404(post_id)
     form = PostForm()
 
-    if post.author.id == current_user.id:
+    if post.author.id == current_user.id or current_user.is_admin:
         # If post was actually edited already:
         if form.validate_on_submit():
             post.title = form.title.data
@@ -370,7 +371,7 @@ def edit_post(post_id: int):
 def delete_post(post_id: int) -> str:
     post_to_delete = Posts.query.get_or_404(post_id)
 
-    if post_to_delete.author.id == current_user.id:
+    if post_to_delete.author.id == current_user.id or current_user.is_admin:
         # noinspection PyBroadException
         try:
             db.session.delete(post_to_delete)

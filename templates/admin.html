@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Admin panel</h2>
+    <br/>
+    {% if current_user.is_admin %}
+        <h3>Existing users</h3>
+        <br/>
+        <div class="shadow-lg p-3 mb-5 bg-body rounded">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#id</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Rights</th>
+                    <th scope="col">Added</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+        {% for user in all_users %}
+            <tr>
+                <td>{{ user.id }}.</td>
+                <td>
+                    @{{ user.username }}<br/>
+                </td>
+                <td>
+                    {{ user.name }}<br/>
+                </td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% if user.is_admin %}
+                    <span class="badge rounded-pill text-bg-success">Admin</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {{ user.date_added.strftime('%d.%m.%Y %H:%M') }}
+                </td>
+                <td>
+                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update_user', user_id=user.id) }}"
+                       role="button">Edit</a>
+                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_user', user_id=user.id) }}"
+                       role="button">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    {% else %}
+        <p>You have no admin rights, sorry.</p>
+    {% endif %}
+{% endblock %}
