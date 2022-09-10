@@ -48,6 +48,39 @@ Basic web blog intended to try out Flask capatibilities..
 - - Kill process: `kill -9 PID`
 - [CodeMy Flask Fridays #9: How to use MySQL instead of sqlite](https://youtu.be/hQl2wyJvK5k)
 
+## Deploying on Linux with nginx and gunicorn
+Create virtualenv, clone repo from github, then:
+```
+$ pip3 install Flask
+$ pip3 install -r requirements.txt
+```
+Run app with gunicorn:
+```
+$ pip3 install gunicorn
+$ gunicorn app:app -b localhost:8000 &
+```
+Setup ngingx:
+```
+$ sudo vim /etc/nginx/conf.d/virtual.conf
+```
+Edit nginx config:
+```
+server {
+    listen       80;
+    server_name  your_public_dnsname_here;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+    }
+}
+```
+Proxy pass directive must be the same port on which the gunicorn process is listening.
+Restart the nginx web server.
+```
+$ sudo nginx -t
+$ sudo service nginx restart
+```
+
 ## Working with database
 Initializing database after installation:
 ```python
