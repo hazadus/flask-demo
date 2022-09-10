@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {%  for message in get_flashed_messages() %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{  message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {%  endfor %}
+
+    <h2>Search results</h2>
+    <br/>
+    <p><b>Your search query:</b> {{ search_query }}</p>
+
+    <p>
+        <b>Search results:</b> <br/>
+    {% for post in search_results %}
+        <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a><br/>
+    {% endfor %}
+    </p>
+{% endblock %}

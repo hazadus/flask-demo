@@ -11,12 +11,17 @@ from flask import Flask, render_template, flash, request, redirect, url_for
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Length
+from wtforms.widgets import TextArea
 from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
-from wtforms.widgets import TextArea
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+
+import config
+
 
 # Configure logger
 logging.basicConfig(level=logging.INFO,
@@ -28,10 +33,23 @@ logging.basicConfig(level=logging.INFO,
                     datefmt='%d/%m/%Y %H:%M:%S',
                     )
 
+# Configure Sentry
+sentry_sdk.init(
+    dsn=config.SENTRY_DSN,
+    integrations=[
+        FlaskIntegration(),
+    ],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0
+)
+
 # Configure Flask app
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog_data.db'
-app.config['SECRET_KEY'] = "my key for CSRF"  # TODO: exlude this from git!
+app.config['SECRET_KEY'] = config.FLASK_CSRF
 
 # Init database
 db = SQLAlchemy(app)
@@ -87,6 +105,11 @@ class Posts(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
+class SearchForm(FlaskForm):
+    search_query = StringField('Search query', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
 # Create Form Classes
 class PostForm(FlaskForm):
     """Used to create new blog post, or edit existing."""
@@ -115,9 +138,21 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
+# Pass stuff to Navbar
+@app.context_processor
+def base():
+    form = SearchForm()
+    return dict(form=form)
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/debug-sentry')
+def trigger_error():
+    return 1 / 0
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -144,6 +179,19 @@ def logout():
     logout_user()
     flash("You have been logged out.")
     return redirect(url_for('login'))
+
+
+@app.route('/search', methods=['POST'])
+def search():  # TODO: validate data required
+    form = SearchForm()
+    if form.validate_on_submit():
+        search_results = Posts.query.filter(Posts.content.like('%' + form.search_query.data + '%'))
+        search_results = search_results.order_by(Posts.title).all()
+        return render_template('search.html', form=form,
+                               search_query=form.search_query.data,
+                               search_results=search_results)
+    else:
+        return redirect(url_for('index'))
 
 
 @app.route('/dashboard', methods=['GET', 'POST'])
