@@ -8,14 +8,14 @@
         </div>
     {%  endfor %}
 
-    <h2>Search results</h2>
+    <h3>You searched for: <em>{{ search_query }}</em></h3>
     <br/>
-    <p><b>Your search query:</b> {{ search_query }}</p>
-
-    <p>
+    {% if search_results %}
         <b>Search results:</b> <br/>
-    {% for post in search_results %}
-        <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a><br/>
-    {% endfor %}
-    </p>
+        {% for post in search_results %}
+            <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a> by {{ post.author.name }}<br/>
+        {% endfor %}
+    {% else %}
+        Sorry, found nothing.
+    {% endif %}
 {% endblock %}
