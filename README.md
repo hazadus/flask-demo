@@ -6,6 +6,8 @@ Basic web blog intended to try out Flask capatibilities..
 - `flask-wtf`
 - `flask-sqlalchemy`
 - `flask-login`
+- `flask-ckeditor`
+- `sentry-sdk[flask]`
 - Optional: `Flask-Migrate`
 - Optional: `gunicorn`
 
@@ -23,10 +25,14 @@ Basic web blog intended to try out Flask capatibilities..
 - - [Bootstrap: Tables](https://getbootstrap.com/docs/5.2/content/tables/)
 - [WTForms Documentation](https://wtforms.readthedocs.io/en/3.0.x/)
 - [SQLAlchemy](https://www.sqlalchemy.org)
+- [Sentry.io Flask Integration](https://docs.sentry.io/platforms/python/guides/flask/)
 - [Flask-login Documentation](https://flask-login.readthedocs.io/en/latest/)
+- [Flask-CKEditor Documentation](https://flask-ckeditor.readthedocs.io/en/latest/)
 - [Gunicorn Docs](https://gunicorn.org/#deployment)
 
 ## Notes
+- Install Sentry:
+- - `pip install --upgrade 'sentry-sdk[flask]'`
 - To run in development mode:
 - - `export FLASK_ENV=development`
 - - `flask run`
