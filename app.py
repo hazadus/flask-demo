@@ -56,6 +56,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog_data.db'
 app.config['SECRET_KEY'] = config.FLASK_CSRF
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
+app.config['CKEDITOR_ENABLE_CODESNIPPET'] = True
+
 
 # Init database
 db = SQLAlchemy(app)
