@@ -267,10 +267,11 @@ def update_user(user_id: int) -> str:
         user_to_update.email = request.form['email']
         user_to_update.favorite_color = request.form['favorite_color']
 
-        profile_pic_filename = str(uuid.uuid1()) + '_' + secure_filename(request.files['profile_pic'].filename)
-        user_to_update.profile_pic = profile_pic_filename
-        request.files['profile_pic'].save(os.path.join(app.config['UPLOAD_FOLDER'], profile_pic_filename))
-        # TODO: delete old profile pic after uploading new
+        if request.files['profile_pic']:
+            profile_pic_filename = str(uuid.uuid1()) + '_' + secure_filename(request.files['profile_pic'].filename)
+            user_to_update.profile_pic = profile_pic_filename
+            request.files['profile_pic'].save(os.path.join(app.config['UPLOAD_FOLDER'], profile_pic_filename))
+            # TODO: delete old profile pic after uploading new
 
         # noinspection PyBroadException
         try:

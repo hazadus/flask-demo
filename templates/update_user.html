@@ -33,9 +33,14 @@
                     </form>
                 </div>
                 <div class="col-4">
+                {% if current_user.profile_pic %}
+                    <img src="{{ url_for('static', filename='uploads/'+current_user.profile_pic) }}"
+                        height="200" width="200" align="right">
+                {% else %}
                     <img src="{{ url_for('static', filename='images/default-profile-pic.png') }}"
-                         height="200" width="200" align="right">
-                </div>
+                        height="200" width="200" align="right">
+                {% endif %}
+               </div>
             </div>
         </div>
         </div>
