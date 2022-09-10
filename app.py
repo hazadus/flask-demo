@@ -12,6 +12,8 @@ from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+from flask_ckeditor import CKEditor
+from flask_ckeditor import CKEditorField
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Length
 from wtforms.widgets import TextArea
@@ -59,6 +61,8 @@ migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'  # Where to redirect if user is not logged in
+
+ckeditor = CKEditor(app)
 
 
 @login_manager.user_loader
@@ -114,7 +118,7 @@ class SearchForm(FlaskForm):
 class PostForm(FlaskForm):
     """Used to create new blog post, or edit existing."""
     title = StringField('Title', validators=[DataRequired()])
-    content = StringField('Content', validators=[DataRequired()], widget=TextArea())
+    content = CKEditorField('Body', validators=[DataRequired()])
     slug = StringField('Slug', validators=[DataRequired()])
     submit = SubmitField('Submit post')
 
@@ -141,6 +145,7 @@ class LoginForm(FlaskForm):
 # Pass stuff to Navbar
 @app.context_processor
 def base():
+    # This is to pass search form into navbar
     form = SearchForm()
     return dict(form=form)
 
