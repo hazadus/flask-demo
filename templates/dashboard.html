@@ -21,14 +21,18 @@ Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">{{ current_user.name }}</h5>
+                    {% if current_user.is_admin %}
+                    <span class="badge rounded-pill text-bg-success">Admin</span>
+                    {% endif %}
                     <p class="card-text">
                         <div class="container">
                             <div class="row">
                                 <div class="col-8">
-                                    @{{ current_user.username }}<br/>
+                                    <b>@{{ current_user.username }}</b><br/>
                                     <a href="mailto:{{ current_user.email }}">{{ current_user.email }}</a><br/>
                                     {{ current_user.favorite_color }}<br/>
-                                    {{ current_user.date_added }}<br/>
+                                    <b>Joined on:</b> {{ current_user.date_added }}<br/>
+                                    <b>Profile pic:</b> {{ current_user.profile_pic }}
                                     <br/>
                                     <br/>
                                     <br/>
@@ -48,8 +52,13 @@ Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
                                     </a>
                                 </div>
                                 <div class="col-4">
-                                    <img src="{{ url_for('static', filename='images/default-profile-pic.png') }}"
-                                        height="200" width="200" align="right">
+                                    {% if current_user.profile_pic %}
+                                        <img src="{{ url_for('static', filename='uploads/'+current_user.profile_pic) }}"
+                                            height="200" width="200" align="right">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='images/default-profile-pic.png') }}"
+                                            height="200" width="200" align="right">
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

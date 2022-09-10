@@ -4,8 +4,10 @@ Boilerplate Flask Web Blog
 Written by Hazadus for test and learning purposes.
 """
 
+import uuid as uuid
 import logging
 import sys
+import os
 
 from flask import Flask, render_template, flash, request, redirect, url_for
 from flask_wtf import FlaskForm
@@ -14,10 +16,12 @@ from flask_migrate import Migrate
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_ckeditor import CKEditor
 from flask_ckeditor import CKEditorField
+from flask_wtf.file import FileField
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Length
 from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
@@ -51,6 +55,7 @@ sentry_sdk.init(
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog_data.db'
 app.config['SECRET_KEY'] = config.FLASK_CSRF
+app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 
 # Init database
 db = SQLAlchemy(app)
@@ -78,6 +83,7 @@ class Users(db.Model, UserMixin):
     email = db.Column(db.String(32), nullable=False, unique=True)
     is_admin = db.Column(db.Boolean, default=False)
     favorite_color = db.Column(db.String(16))
+    profile_pic = db.Column(db.String(), nullable=True)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     password_hash = db.Column(db.String(128))
     # User can have many posts
@@ -133,6 +139,7 @@ class UserForm(FlaskForm):
                                                           EqualTo('password_hash2',
                                                                   message='Passwords must match!')])
     password_hash2 = PasswordField('Confirm Password', validators=[DataRequired()])
+    profile_pic = FileField('Profile Picture')
     submit = SubmitField('Submit')
 
 
@@ -259,6 +266,12 @@ def update_user(user_id: int) -> str:
         user_to_update.name = request.form['name']
         user_to_update.email = request.form['email']
         user_to_update.favorite_color = request.form['favorite_color']
+
+        profile_pic_filename = str(uuid.uuid1()) + '_' + secure_filename(request.files['profile_pic'].filename)
+        user_to_update.profile_pic = profile_pic_filename
+        request.files['profile_pic'].save(os.path.join(app.config['UPLOAD_FOLDER'], profile_pic_filename))
+        # TODO: delete old profile pic after uploading new
+
         # noinspection PyBroadException
         try:
             db.session.commit()

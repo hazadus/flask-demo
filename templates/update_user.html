@@ -9,20 +9,35 @@
     {%  endfor %}
 
     {% if user_to_update.id == current_user.id or current_user.is_admin %}
-        <h1>Update user record</h1>
+        <h3>Edit your profile</h3>
         <br/>
         <div class="shadow-lg p-3 mb-5 bg-body rounded">
-            <form action="/update/{{ user_to_update.id }}" method="POST">
-                {{ form.hidden_tag() }}
-                {{ form.name.label(class="form-label") }}
-                {{ form.name(class="form-control", value=user_to_update.name) }}
-                {{ form.email.label(class="form-label") }}
-                {{ form.email(class="form-control", value=user_to_update.email) }}
-                {{ form.favorite_color.label(class="form-label") }}
-                {{ form.favorite_color(class="form-control", value=user_to_update.favorite_color) }}
-            <br/>
-                {{ form.submit(class="btn btn-primary") }}
-            </form>
+            <div class="container">
+            <div class="row">
+                <div class="col-8">
+                    <form action="/update/{{ user_to_update.id }}" method="POST" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control", value=user_to_update.name) }}
+                        <br/>
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control", value=user_to_update.email) }}
+                        <br/>
+                        {{ form.favorite_color.label(class="form-label") }}
+                        {{ form.favorite_color(class="form-control", value=user_to_update.favorite_color) }}
+                        <br/>
+                        {{ form.profile_pic.label(class="form-label") }}
+                        {{ form.profile_pic(class="form-control", value=user_to_update.profile_pic) }}
+                        <br/>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </form>
+                </div>
+                <div class="col-4">
+                    <img src="{{ url_for('static', filename='images/default-profile-pic.png') }}"
+                         height="200" width="200" align="right">
+                </div>
+            </div>
+        </div>
         </div>
     {% else %}
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
