@@ -354,6 +354,12 @@ def view_post(post_id: int) -> str:
     return render_template('post.html', post=post)
 
 
+@app.route('/post/<string:post_slug>')
+def view_post_by_slug(post_slug: str) -> str:
+    post = Posts.query.filter(Posts.slug == post_slug).first_or_404()
+    return render_template('post.html', post=post)
+
+
 @app.route('/posts/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required  # Redirect to Login page if user is not logged in
 def edit_post(post_id: int):
