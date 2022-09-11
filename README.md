@@ -47,6 +47,7 @@ Basic web blog intended to try out Flask capatibilities..
 - - List gunicorn processess: `ps ax | grep gunicorn`
 - - Kill process: `kill -9 PID`
 - [CodeMy Flask Fridays #9: How to use MySQL instead of sqlite](https://youtu.be/hQl2wyJvK5k)
+- Copy DB to server: `scp /Users/hazadus/PycharmProjects/flask-demo/blog_data.db root@188.225.72.155:/usr/projects/flask-demo`
 
 ## Deploying on Linux with nginx and gunicorn
 Create virtualenv, clone repo from github, then:
