@@ -12,10 +12,20 @@
     <h3>You searched for: <em>{{ search_query }}</em></h3>
     <br/>
     {% if search_results %}
-        <b>Search results:</b> <br/>
-        {% for post in search_results %}
-            <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a> by {{ post.author.name }}<br/>
-        {% endfor %}
+        <b>Search results:</b>
+        <br/>
+        <br/>
+        <div class="card" style="width: 100%;">
+            <ul class="list-group list-group-flush">
+            {% for post in search_results %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
+                    <br/>
+                    <i>Posted on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }} by {{ post.author.name }}</i>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
     {% else %}
         Sorry, found nothing.
     {% endif %}
