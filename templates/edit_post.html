@@ -23,11 +23,16 @@
             {{ form.content.label(class="form-label") }}
             {{ form.content(class="form-control", rows=5) }}
             <br/>
+            <div id="react_div"></div>
+            <br/>
             {{ form.submit(class="btn btn-primary") }}
         </form>
 
         {{ ckeditor.load() }}
         {{ ckeditor.config(name='content') }}
+        <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+        <script src="{{ url_for('static', filename='js/react_test.js') }}"></script>
         <br/>
         <a class="btn btn-outline-primary btn-sm" href="{{ url_for('view_all_posts') }}"
                    role="button">Back to all posts page</a>
