@@ -4,6 +4,22 @@
 {% block content %}
     <h2>Admin panel</h2>
     <br/>
+    <h3>Fetch JSON test</h3>
+    <div id="json_content"></div>
+    <script>
+        // script must be placed AFTER target div!
+        const api_url = {{ url_for('get_current_date')|tojson }}
+        const target_div = document.getElementById("json_content")
+
+        // https://flask.palletsprojects.com/en/2.2.x/patterns/javascript/#making-a-request-with-fetch
+        fetch(api_url)
+            .then(response => response.json())
+            .then(data => {
+                // data is a parsed JSON object
+                target_div.innerHTML = data.Date
+            })
+    </script>
+    <br/>
     {% if current_user.is_admin %}
         <h3>Existing users</h3>
         <br/>
