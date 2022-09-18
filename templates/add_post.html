@@ -21,8 +21,19 @@
             {{ form.slug.label(class="form-label") }}
             {{ form.slug(class="form-control") }}
             <br/>
+            {{ form.summary.label(class="form-label") }}
+            {{ form.summary(class="form-control") }}
+            <br/>
+            {{ form.banner_pic.label(class="form-label") }}
+            {{ form.banner_pic(class="form-control") }}
+            <br/>
             {{ form.content.label(class="form-label") }}
             {{ form.content(class="form-control", rows=5) }}
+            <br/>
+            <div class="form-check">
+                {{ form.is_draft(class="form-check-input") }}
+                {{ form.is_draft.label(class="form-check-label") }}
+            </div>
             <br/>
             {{ form.submit(class="btn btn-primary") }}
         </form>

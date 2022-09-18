@@ -9,7 +9,7 @@ import logging
 import sys
 import os
 
-from flask import Flask, render_template, flash, request, redirect, url_for
+from flask import Flask, render_template, flash, request, redirect, url_for, abort
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -26,7 +26,6 @@ import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 import config
-
 
 # Configure logger
 logging.basicConfig(level=logging.INFO,
@@ -57,7 +56,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog_data.db'
 app.config['SECRET_KEY'] = config.FLASK_CSRF
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 app.config['CKEDITOR_ENABLE_CODESNIPPET'] = True
-
 
 # Init database
 db = SQLAlchemy(app)
@@ -110,9 +108,13 @@ class Posts(db.Model):  # TODO: add 'is_draft' field
     """Blog post DB table model"""
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128))
+    summary = db.Column(db.Text, default=None)
     content = db.Column(db.Text)
+    banner_pic = db.Column(db.String(), nullable=True)
     slug = db.Column(db.String(256))
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    is_draft = db.Column(db.Boolean, default=False)
+    views_count = db.Column(db.Integer, default=0)
     # Foreign key to link users (refer to primary key of the user)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
@@ -126,8 +128,12 @@ class SearchForm(FlaskForm):
 class PostForm(FlaskForm):
     """Used to create new blog post, or edit existing."""
     title = StringField('Title', validators=[DataRequired()])
-    content = CKEditorField('Body', validators=[DataRequired()])
     slug = StringField('Slug', validators=[DataRequired()])
+    summary = StringField('Summary', validators=[DataRequired()])  # TODO: change to larger text field
+    banner_pic = StringField('Picture filename')  # Assuming the file in 'uploads' folder
+    content = CKEditorField('Body', validators=[DataRequired()])
+    is_draft = BooleanField('Mark as Draft')
+    is_date_posted_to_current = BooleanField('Set \'posted date\' to current')
     submit = SubmitField('Submit post')
 
 
@@ -208,6 +214,7 @@ def search():  # TODO: validate data required
     form = SearchForm()
     if form.validate_on_submit():
         search_results = Posts.query.filter(Posts.content.like('%' + form.search_query.data + '%'))
+        search_results = search_results.filter(Posts.is_draft.is_(False))  # Remove drafts from search results
         search_results = search_results.order_by(Posts.title).all()
         return render_template('search.html', form=form,
                                search_query=form.search_query.data,
@@ -324,13 +331,19 @@ def add_post() -> str:
     if form.validate_on_submit():
         post = Posts(title=form.title.data,
                      content=form.content.data,
+                     summary=form.summary.data,
+                     banner_pic=form.banner_pic.data,
                      author_id=current_user.id,  # make relationship with currently logged in user as author
+                     is_draft=form.is_draft.data,
                      slug=form.slug.data)
 
         # Clear the form
         form.title.data = ''
-        form.content.data = ''
         form.slug.data = ''
+        form.summary.data = ''
+        form.banner_pic.data = ''
+        form.content.data = ''
+        form.is_draft.data = False
 
         # Add post to DB
         db.session.add(post)
@@ -351,12 +364,22 @@ def view_all_posts() -> str:
 @app.route('/posts/<int:post_id>')
 def view_post(post_id: int) -> str:
     post = Posts.query.get_or_404(post_id)
+    # if post.is_draft:  # TODO: make admin or post author able to view drafts
+    #     abort(404)
+    post.views_count += 1
+    db.session.add(post)  # Update DB with changed post
+    db.session.commit()
     return render_template('post.html', post=post)
 
 
 @app.route('/post/<string:post_slug>')
 def view_post_by_slug(post_slug: str) -> str:
     post = Posts.query.filter(Posts.slug == post_slug).first_or_404()
+    # if post.is_draft:  # TODO: make admin or post author able to view drafts
+    #     abort(404)
+    post.views_count += 1
+    db.session.add(post)  # Update DB with changed post
+    db.session.commit()
     return render_template('post.html', post=post)
 
 
@@ -370,8 +393,15 @@ def edit_post(post_id: int):
         # If post was actually edited already:
         if form.validate_on_submit():
             post.title = form.title.data
-            post.content = form.content.data
             post.slug = form.slug.data
+            post.summary = form.summary.data
+            post.banner_pic = form.banner_pic.data
+            post.content = form.content.data
+            post.is_draft = form.is_draft.data
+
+            if form.is_date_posted_to_current.data:
+                post.date_posted = datetime.now()
+
             # Update DB
             db.session.add(post)  # Update DB with changed post
             db.session.commit()
@@ -381,7 +411,11 @@ def edit_post(post_id: int):
         # Pass data to fill out the form for editing
         form.title.data = post.title
         form.slug.data = post.slug
+        form.summary.data = post.summary
+        form.banner_pic.data = post.banner_pic
         form.content.data = post.content
+        form.is_draft.data = post.is_draft
+        form.is_date_posted_to_current.data = False
         return render_template('edit_post.html', form=form)
     else:
         flash("Can't edit other user's posts, sorry.")

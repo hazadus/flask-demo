@@ -11,7 +11,19 @@
 
     <div class="shadow-lg p-3 mb-5 bg-body rounded">
         <h3>{{ post.title }}</h3>
-        <i>by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}</i><br/><br/>
+        {% if post.is_draft %}
+            <span class="badge rounded-pill text-bg-success">Draft</span>
+        {% endif %}
+        <i>
+            &#x1F4CC; by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
+            &#x1F440; {{ post.views_count }} views
+        </i>
+        <br/>
+        <br/>
+        {% if post.banner_pic %}
+        <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
+             class="rounded mx-auto d-block" width="200">
+        {% endif %}
         <p>
             {{ post.content|safe }}
         </p>
@@ -36,8 +48,10 @@
         <div id="disqus_thread"></div>
         <script>
             /**
-            *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-            *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+            *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM
+            *  YOUR PLATFORM OR CMS.
+            *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT:
+            *  https://disqus.com/admin/universalcode/#configuration-variables    */
 
             var disqus_config = function () {
             this.page.url = "http://www.hazadus.ru{{ url_for('view_post', post_id=post.id) }}";
