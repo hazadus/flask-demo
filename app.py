@@ -27,7 +27,6 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 
 import config
 
-
 # Configure logger
 logging.basicConfig(level=logging.INFO,
                     handlers=[
@@ -57,7 +56,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog_data.db'
 app.config['SECRET_KEY'] = config.FLASK_CSRF
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 app.config['CKEDITOR_ENABLE_CODESNIPPET'] = True
-
 
 # Init database
 db = SQLAlchemy(app)
@@ -215,6 +213,7 @@ def search():  # TODO: validate data required
     form = SearchForm()
     if form.validate_on_submit():
         search_results = Posts.query.filter(Posts.content.like('%' + form.search_query.data + '%'))
+        search_results = search_results.filter(Posts.is_draft.is_(False))  # Remove drafts from search results
         search_results = search_results.order_by(Posts.title).all()
         return render_template('search.html', form=form,
                                search_query=form.search_query.data,
