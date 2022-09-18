@@ -131,8 +131,9 @@ class PostForm(FlaskForm):
     slug = StringField('Slug', validators=[DataRequired()])
     summary = StringField('Summary', validators=[DataRequired()])  # TODO: change to larger text field
     banner_pic = StringField('Picture filename')  # Assuming the file in 'uploads' folder
-    is_draft = BooleanField('Mark as Draft')
     content = CKEditorField('Body', validators=[DataRequired()])
+    is_draft = BooleanField('Mark as Draft')
+    is_date_posted_to_current = BooleanField('Set \'posted date\' to current')
     submit = SubmitField('Submit post')
 
 
@@ -397,6 +398,10 @@ def edit_post(post_id: int):
             post.banner_pic = form.banner_pic.data
             post.content = form.content.data
             post.is_draft = form.is_draft.data
+
+            if form.is_date_posted_to_current.data:
+                post.date_posted = datetime.now()
+
             # Update DB
             db.session.add(post)  # Update DB with changed post
             db.session.commit()
@@ -410,6 +415,7 @@ def edit_post(post_id: int):
         form.banner_pic.data = post.banner_pic
         form.content.data = post.content
         form.is_draft.data = post.is_draft
+        form.is_date_posted_to_current.data = False
         return render_template('edit_post.html', form=form)
     else:
         flash("Can't edit other user's posts, sorry.")
