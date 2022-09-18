@@ -19,11 +19,12 @@
         {% block javascript %}{% endblock %}
         {% include 'ya-metrika.html' %}
         {{ ckeditor.load_code_theme() }}
+        {% block style %}{% endblock %}
     </head>
     <body>
         {% include 'navbar.html' %}
         <br/>
-        <div class="container">
+        <div class="container-fluid">
             {% block content %}
             {% endblock %}
         </div>

@@ -1,13 +1,31 @@
 {% extends 'base.html' %}
 {% block title %}{{ post.title }}{% endblock %}
-
+{% block style %}
+    <style>
+    #post-card img {
+        width: 100%;
+        height: 100px;
+        object-fit: cover;
+    }
+    </style>
+{% endblock %}
 {% block content %}
+<div class="row">
+    <div class="col-sm-8">
     {%  for message in get_flashed_messages() %}
         <div class="alert alert-success alert-dismissible fade show" role="alert">
           {{  message }}
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     {%  endfor %}
+
+    <!-- https://www.digitalocean.com/community/tutorials/css-cropping-images-object-fit -->
+    {% if post.banner_pic %}
+        <div id="post-card">
+            <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
+                 class="mw-100 rounded">
+        </div>
+    {% endif %}
 
     <div class="shadow-lg p-3 mb-5 bg-body rounded">
         <h3>{{ post.title }}</h3>
@@ -20,10 +38,6 @@
         </i>
         <br/>
         <br/>
-        {% if post.banner_pic %}
-        <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
-             class="rounded mx-auto d-block" width="200">
-        {% endif %}
         <p>
             {{ post.content|safe }}
         </p>
@@ -66,7 +80,17 @@
             })();
         </script>
         <noscript>
-            Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+            Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
         </noscript>
     </div>
+    </div>
+<div class="col-sm-4">
+    <div class="shadow-lg p-3 mb-5 bg-body rounded">
+        More posts<br/>
+        Archive<br/>
+        Other stuff...
+    </div>
+</div>
+</div>
 {% endblock %}
