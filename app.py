@@ -110,9 +110,13 @@ class Posts(db.Model):  # TODO: add 'is_draft' field
     """Blog post DB table model"""
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128))
+    summary = db.Column(db.Text, default=None)
     content = db.Column(db.Text)
+    banner_pic = db.Column(db.String(), nullable=True)
     slug = db.Column(db.String(256))
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    is_draft = db.Column(db.Boolean, default=False)
+    views_count = db.Column(db.Integer, default=0)
     # Foreign key to link users (refer to primary key of the user)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
@@ -126,8 +130,11 @@ class SearchForm(FlaskForm):
 class PostForm(FlaskForm):
     """Used to create new blog post, or edit existing."""
     title = StringField('Title', validators=[DataRequired()])
-    content = CKEditorField('Body', validators=[DataRequired()])
     slug = StringField('Slug', validators=[DataRequired()])
+    summary = StringField('Summary', validators=[DataRequired()])  # TODO: change to larger text field
+    banner_pic = StringField('Picture filename')  # Assuming the file in 'uploads' folder
+    # TODO: add elements for is_draft
+    content = CKEditorField('Body', validators=[DataRequired()])
     submit = SubmitField('Submit post')
 
 
@@ -324,13 +331,17 @@ def add_post() -> str:
     if form.validate_on_submit():
         post = Posts(title=form.title.data,
                      content=form.content.data,
+                     summary=form.summary.data,
+                     banner_pic=form.banner_pic.data,
                      author_id=current_user.id,  # make relationship with currently logged in user as author
                      slug=form.slug.data)
 
         # Clear the form
         form.title.data = ''
-        form.content.data = ''
         form.slug.data = ''
+        form.summary.data = ''
+        form.banner_pic.data = ''
+        form.content.data = ''
 
         # Add post to DB
         db.session.add(post)
@@ -370,8 +381,10 @@ def edit_post(post_id: int):
         # If post was actually edited already:
         if form.validate_on_submit():
             post.title = form.title.data
-            post.content = form.content.data
             post.slug = form.slug.data
+            post.summary = form.summary.data
+            post.banner_pic = form.banner_pic.data
+            post.content = form.content.data
             # Update DB
             db.session.add(post)  # Update DB with changed post
             db.session.commit()
@@ -381,6 +394,8 @@ def edit_post(post_id: int):
         # Pass data to fill out the form for editing
         form.title.data = post.title
         form.slug.data = post.slug
+        form.summary.data = post.summary
+        form.banner_pic.data = post.banner_pic
         form.content.data = post.content
         return render_template('edit_post.html', form=form)
     else:
