@@ -30,6 +30,11 @@
             {{ form.content.label(class="form-label") }}
             {{ form.content(class="form-control", rows=5) }}
             <br/>
+            <div class="form-check">
+                {{ form.is_draft(class="form-check-input") }}
+                {{ form.is_draft.label(class="form-check-label") }}
+            </div>
+            <br/>
             {{ form.submit(class="btn btn-primary") }}
         </form>
 

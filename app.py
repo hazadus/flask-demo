@@ -133,7 +133,7 @@ class PostForm(FlaskForm):
     slug = StringField('Slug', validators=[DataRequired()])
     summary = StringField('Summary', validators=[DataRequired()])  # TODO: change to larger text field
     banner_pic = StringField('Picture filename')  # Assuming the file in 'uploads' folder
-    # TODO: add elements for is_draft
+    is_draft = BooleanField('Mark as Draft')
     content = CKEditorField('Body', validators=[DataRequired()])
     submit = SubmitField('Submit post')
 
@@ -334,6 +334,7 @@ def add_post() -> str:
                      summary=form.summary.data,
                      banner_pic=form.banner_pic.data,
                      author_id=current_user.id,  # make relationship with currently logged in user as author
+                     is_draft=form.is_draft.data,
                      slug=form.slug.data)
 
         # Clear the form
@@ -342,6 +343,7 @@ def add_post() -> str:
         form.summary.data = ''
         form.banner_pic.data = ''
         form.content.data = ''
+        form.is_draft.data = False
 
         # Add post to DB
         db.session.add(post)
@@ -385,6 +387,7 @@ def edit_post(post_id: int):
             post.summary = form.summary.data
             post.banner_pic = form.banner_pic.data
             post.content = form.content.data
+            post.is_draft = form.is_draft.data
             # Update DB
             db.session.add(post)  # Update DB with changed post
             db.session.commit()
@@ -397,6 +400,7 @@ def edit_post(post_id: int):
         form.summary.data = post.summary
         form.banner_pic.data = post.banner_pic
         form.content.data = post.content
+        form.is_draft.data = post.is_draft
         return render_template('edit_post.html', form=form)
     else:
         flash("Can't edit other user's posts, sorry.")
