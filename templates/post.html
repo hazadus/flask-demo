@@ -14,7 +14,12 @@
         {% if post.is_draft %}
             <span class="badge rounded-pill text-bg-success">Draft</span>
         {% endif %}
-        <i>by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}</i><br/><br/>
+        <i>
+            &#x1F4CC; by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
+            &#x1F440; {{ post.views_count }} views
+        </i>
+        <br/>
+        <br/>
         <p>
             {{ post.content|safe }}
         </p>

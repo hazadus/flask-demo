@@ -21,7 +21,10 @@
                 <li class="list-group-item">
                     <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
                     <br/>
-                    <i>Posted on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }} by {{ post.author.name }}</i>
+                    <i>
+                        &#x1F4CC; Posted on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }} by {{ post.author.name }}
+                        &#x1F440; {{ post.views_count }} views
+                    </i>
                 </li>
             {% endfor %}
             </ul>
