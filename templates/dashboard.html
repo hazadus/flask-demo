@@ -83,11 +83,18 @@ Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
                 </thead>
                 <tbody class="table-group-divider">
                     {% for post in posts %}
+                        {% if post.is_draft %}
+                        <tr class="table-info">
+                        {% else %}
                         <tr>
+                        {%  endif %}
                             <td>
                                 {{ post.id }}
                             </td>
                             <td>
+                            {% if post.is_draft %}
+                                <span class="badge rounded-pill text-bg-success">Draft</span>
+                            {% endif %}
                                 <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
                             </td>
                             <td>

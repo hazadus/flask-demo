@@ -9,7 +9,7 @@ import logging
 import sys
 import os
 
-from flask import Flask, render_template, flash, request, redirect, url_for
+from flask import Flask, render_template, flash, request, redirect, url_for, abort
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -363,12 +363,16 @@ def view_all_posts() -> str:
 @app.route('/posts/<int:post_id>')
 def view_post(post_id: int) -> str:
     post = Posts.query.get_or_404(post_id)
+    # if post.is_draft:  # TODO: make admin or post author able to view drafts
+    #     abort(404)
     return render_template('post.html', post=post)
 
 
 @app.route('/post/<string:post_slug>')
 def view_post_by_slug(post_slug: str) -> str:
     post = Posts.query.filter(Posts.slug == post_slug).first_or_404()
+    # if post.is_draft:  # TODO: make admin or post author able to view drafts
+    #     abort(404)
     return render_template('post.html', post=post)
 
 
