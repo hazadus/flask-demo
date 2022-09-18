@@ -19,14 +19,14 @@
                             {% endif %} @{{ current_user.username }}
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ url_for('add_post') }}">Add post</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('add_post') }}">&#x1F4DD; Add post</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard') }}">&#x1F4CA; Dashboard</a></li>
                             {% if current_user.is_admin %}
-                                <li><a class="dropdown-item" href="{{ url_for('admin') }}">Admin panel</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin') }}">&#x1F6E0; Admin panel</a></li>
                             {% endif %}
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">&#x1F44B; Logout</a></li>
                         </ul>
                     </li>
                 {% else %}
