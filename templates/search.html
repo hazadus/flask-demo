@@ -18,14 +18,34 @@
         <div class="card" style="width: 100%;">
             <ul class="list-group list-group-flush">
             {% for post in search_results %}
-                <li class="list-group-item">
-                    <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
-                    <br/>
-                    <i>
-                        &#x1F4CC; Posted on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }} by {{ post.author.name }}
-                        &#x1F440; {{ post.views_count }} views
-                    </i>
-                </li>
+                <div class="card mb-3" style="">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            {% if post.banner_pic %}
+                            <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
+                                 class="img-fluid rounded-start" alt="{{ post.title }}">
+                            {% else %}
+                            <img src="{{ url_for('static', filename='uploads/blog-post-placeholder.webp') }}"
+                                 class="img-fluid rounded-start" alt="{{ post.title }}">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    &#x1F4C4;
+                                    <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
+                                </h5>
+                                <p class="card-text">{{ post.summary }}</p>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        &#x1F4CC; by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
+                                        &#x1F440; {{ post.views_count }} views
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
             </ul>
         </div>
