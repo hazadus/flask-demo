@@ -1,5 +1,14 @@
 {% extends 'base.html' %}
 {% block title %}Search - {{ search_query }}{% endblock %}
+{% block style %}
+    <style>
+    #post-banner img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+    }
+    </style>
+{% endblock %}
 
 {% block content %}
     {%  for message in get_flashed_messages() %}
@@ -20,7 +29,7 @@
             {% for post in search_results %}
                 <div class="card mb-3" style="">
                     <div class="row g-0">
-                        <div class="col-md-4">
+                        <div class="col-md-4" id="post-banner">
                             {% if post.banner_pic %}
                             <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
                                  class="img-fluid rounded-start" alt="{{ post.title }}">

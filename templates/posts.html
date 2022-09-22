@@ -1,5 +1,34 @@
 {% extends 'base.html' %}
 {% block title %}View all posts{% endblock %}
+{% block style %}
+    <style>
+    #posts-carousel .carousel-item img {
+        object-fit: cover;
+        object-position: center;
+        height: 40vh;
+        overflow: hidden;
+    }
+
+    #posts-carousel .carousel-item:before {
+        content: "";
+        background-image:
+        linear-gradient(
+            to bottom,
+            transparent, rgba(0, 0, 0, 1));
+        display: block;
+        position: absolute;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    #post-card img {
+        width: 100%;
+        height: 100px;
+        object-fit: cover;
+    }
+    </style>
+{% endblock %}
 
 {% block content %}
     {%  for message in get_flashed_messages() %}
@@ -9,13 +38,70 @@
         </div>
     {%  endfor %}
 
-    <h2>Blog Posts</h2>
+    <!-- Carousel -->
+    <!--
+        https://www.w3schools.com/bootstrap5/bootstrap_carousel.php
+        https://getbootstrap.com/docs/5.2/components/carousel/
+    -->
+    <div id="posts-carousel" class="carousel slide" data-bs-ride="carousel">
+
+        <!-- Indicators/dots -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#posts-carousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#posts-carousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#posts-carousel" data-bs-slide-to="2"></button>
+        </div>
+
+        <!-- The slideshow/carousel -->
+        <div class="carousel-inner">
+        {% for i in range(3) %} <!-- TODO: do not pass drafts there... -->
+            <div class="carousel-item active">
+            {%  if posts[i].banner_pic %}
+            <img src="{{ url_for('static', filename='uploads/' + posts[i].banner_pic) }}" alt="{{ posts[i].title }}"
+                 class="d-block w-100">
+            {% else %}
+            <img src="{{ url_for('static', filename='uploads/blog-post-placeholder.webp') }}" alt="{{ posts[i].title }}"
+                 class="d-block w-100">
+            {% endif %}
+                <div class="carousel-caption">
+                    <h3>
+                        <!-- <a href="{{ url_for('view_post_by_slug', post_slug=posts[i].slug) }}"> -->
+                        {{ posts[i].title }}
+                        <!--  </a> -->
+                    </h3>
+                    <p>{{ posts[i].summary }}</p>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+
+        <!-- Left and right controls/icons -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#posts-carousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#posts-carousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+
     <br/>
     {% for post in posts %}
-        {% if not post.is_draft %}
+        {% if not post.is_draft %} <!-- TODO: do not pass drafts here! -->
+            <div id="post-card">
+            {% if post.banner_pic %}
+                <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
+                     alt="{{ post.title }}"
+                     class="mw-100 rounded">
+            {% else %}
+                <img src="{{ url_for('static', filename='uploads/blog-post-placeholder.webp/') }}"
+                     alt="{{ post.title }}"
+                     class="mw-100 rounded">
+            {% endif %}
+            </div>
+
             <div class="shadow-lg p-3 mb-5 bg-body rounded">
                 <h3>{{ post.title }}</h3>
-                <i>
+                <i class="text-muted">
                     &#x1F4CC; by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
                     &#x1F440; {{ post.views_count }} views
                 </i>
@@ -24,12 +110,14 @@
                 <p>
                     {{ post.content|safe }}
                 </p>
-                <a class="btn btn-outline-primary btn-sm" href="{{ url_for('view_post_by_slug', post_slug=post.slug) }}"  role="button">
+                <a class="btn btn-outline-primary btn-sm" href="{{ url_for('view_post_by_slug', post_slug=post.slug) }}"
+                   role="button">
                     View post
                 </a>
                 {% if current_user.is_authenticated %}
                     {% if post.author.id == current_user.id or current_user.is_admin %}
-                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('edit_post', post_id=post.id) }}"  role="button">
+                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('edit_post', post_id=post.id) }}"
+                       role="button">
                         Edit post
                     </a>
                     <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_post', post_id=post.id) }}"

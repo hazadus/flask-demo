@@ -1,7 +1,24 @@
 {% extends 'base.html' %}
 {% block title %}{{ post.title }}{% endblock %}
-
+{% block style %}
+    <style>
+    #post-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    </style>
+{% endblock %}
 {% block content %}
+    {% if post.banner_pic %}
+        <div id="post-card">
+            <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
+                 class="mw-100">
+        </div>
+    {% endif %}
+
+<div class="row">
+    <div class="col-sm-8">
     {%  for message in get_flashed_messages() %}
         <div class="alert alert-success alert-dismissible fade show" role="alert">
           {{  message }}
@@ -9,21 +26,19 @@
         </div>
     {%  endfor %}
 
-    <div class="shadow-lg p-3 mb-5 bg-body rounded">
+    <!-- https://www.digitalocean.com/community/tutorials/css-cropping-images-object-fit -->
+
+    <div class="shadow-lg p-3 mb-5 bg-body">
         <h3>{{ post.title }}</h3>
         {% if post.is_draft %}
             <span class="badge rounded-pill text-bg-success">Draft</span>
         {% endif %}
-        <i>
+        <i class="text-muted">
             &#x1F4CC; by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
             &#x1F440; {{ post.views_count }} views
         </i>
         <br/>
         <br/>
-        {% if post.banner_pic %}
-        <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
-             class="rounded mx-auto d-block" width="200">
-        {% endif %}
         <p>
             {{ post.content|safe }}
         </p>
@@ -44,7 +59,8 @@
             {% endif %}
         {% endif %}
     </div>
-    <div class="shadow-lg p-3 mb-5 bg-body rounded">
+    {% if not post.is_draft %}
+    <div class="shadow-lg p-3 mb-5 bg-body">
         <div id="disqus_thread"></div>
         <script>
             /**
@@ -66,7 +82,19 @@
             })();
         </script>
         <noscript>
-            Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+            Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
         </noscript>
+        </div>
     </div>
+    {% endif %}
+<div class="col-sm-4">
+    <div class="shadow-lg p-3 mb-5 bg-body">
+        About this blog<br/>
+        More posts<br/>
+        Archive<br/>
+        Other stuff...
+    </div>
+</div>
+</div>
 {% endblock %}
