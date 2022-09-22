@@ -104,7 +104,7 @@ class Users(db.Model, UserMixin):
         return '<Name %r>' % self.name
 
 
-class Posts(db.Model):  # TODO: add 'is_draft' field
+class Posts(db.Model):
     """Blog post DB table model"""
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128))
@@ -357,7 +357,8 @@ def add_post() -> str:
 @app.route('/posts')
 def view_all_posts() -> str:
     """Show 'All posts' section."""
-    posts = Posts.query.order_by(Posts.date_posted.desc())
+    posts = Posts.query.filter_by(is_draft=False)
+    posts = posts.order_by(Posts.date_posted.desc())
     return render_template('posts.html', posts=posts)
 
 

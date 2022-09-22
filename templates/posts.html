@@ -54,7 +54,7 @@
 
         <!-- The slideshow/carousel -->
         <div class="carousel-inner">
-        {% for i in range(3) %} <!-- TODO: do not pass drafts there... -->
+        {% for i in range(3) %}
             <div class="carousel-item active">
             {%  if posts[i].banner_pic %}
             <img src="{{ url_for('static', filename='uploads/' + posts[i].banner_pic) }}" alt="{{ posts[i].title }}"
@@ -86,47 +86,45 @@
 
     <br/>
     {% for post in posts %}
-        {% if not post.is_draft %} <!-- TODO: do not pass drafts here! -->
-            <div id="post-card">
-            {% if post.banner_pic %}
-                <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
-                     alt="{{ post.title }}"
-                     class="mw-100 rounded">
-            {% else %}
-                <img src="{{ url_for('static', filename='uploads/blog-post-placeholder.webp/') }}"
-                     alt="{{ post.title }}"
-                     class="mw-100 rounded">
-            {% endif %}
-            </div>
-
-            <div class="shadow-lg p-3 mb-5 bg-body rounded">
-                <h3>{{ post.title }}</h3>
-                <i class="text-muted">
-                    &#x1F4CC; by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
-                    &#x1F440; {{ post.views_count }} views
-                </i>
-                <br/>
-                <br/>
-                <p>
-                    {{ post.content|safe }}
-                </p>
-                <a class="btn btn-outline-primary btn-sm" href="{{ url_for('view_post_by_slug', post_slug=post.slug) }}"
-                   role="button">
-                    View post
-                </a>
-                {% if current_user.is_authenticated %}
-                    {% if post.author.id == current_user.id or current_user.is_admin %}
-                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('edit_post', post_id=post.id) }}"
-                       role="button">
-                        Edit post
-                    </a>
-                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_post', post_id=post.id) }}"
-                       role="button">
-                        Delete post
-                    </a>
-                    {% endif %}
-                {% endif %}
-            </div>
+        <div id="post-card">
+        {% if post.banner_pic %}
+            <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
+                 alt="{{ post.title }}"
+                 class="mw-100 rounded">
+        {% else %}
+            <img src="{{ url_for('static', filename='uploads/blog-post-placeholder.webp/') }}"
+                 alt="{{ post.title }}"
+                 class="mw-100 rounded">
         {% endif %}
+        </div>
+
+        <div class="shadow-lg p-3 mb-5 bg-body rounded">
+            <h3>{{ post.title }}</h3>
+            <i class="text-muted">
+                &#x1F4CC; by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
+                &#x1F440; {{ post.views_count }} views
+            </i>
+            <br/>
+            <br/>
+            <p>
+                {{ post.content|safe }}
+            </p>
+            <a class="btn btn-outline-primary btn-sm" href="{{ url_for('view_post_by_slug', post_slug=post.slug) }}"
+               role="button">
+                View post
+            </a>
+            {% if current_user.is_authenticated %}
+                {% if post.author.id == current_user.id or current_user.is_admin %}
+                <a class="btn btn-outline-primary btn-sm" href="{{ url_for('edit_post', post_id=post.id) }}"
+                   role="button">
+                    Edit post
+                </a>
+                <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_post', post_id=post.id) }}"
+                   role="button">
+                    Delete post
+                </a>
+                {% endif %}
+            {% endif %}
+        </div>
     {% endfor %}
 {% endblock %}
