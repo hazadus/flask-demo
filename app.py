@@ -84,7 +84,7 @@ class Users(db.Model, UserMixin):
     is_admin = db.Column(db.Boolean, default=False)
     favorite_color = db.Column(db.String(16))
     profile_pic = db.Column(db.String(), nullable=True)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    date_added = db.Column(db.DateTime, default=datetime.now())
     password_hash = db.Column(db.String(128))
     # User can have many posts
     posts = db.relationship('Posts', backref='author')  # Usage from Jinja: {{ post.author.name }}
@@ -112,7 +112,7 @@ class Posts(db.Model):  # TODO: add 'is_draft' field
     content = db.Column(db.Text)
     banner_pic = db.Column(db.String(), nullable=True)
     slug = db.Column(db.String(256))
-    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    date_posted = db.Column(db.DateTime, default=datetime.now())
     is_draft = db.Column(db.Boolean, default=False)
     views_count = db.Column(db.Integer, default=0)
     # Foreign key to link users (refer to primary key of the user)
