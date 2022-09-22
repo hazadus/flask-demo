@@ -31,9 +31,9 @@
                 <p class="col-md-4 mb-0 text-muted">&copy; 2022 hazadus.ru</p>
 
                 <ul class="nav col-md-4 justify-content-end">
-                    <li class="nav-item"><a href="/" class="nav-link px-2 text-muted">Home</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">All posts</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Sign up</a></li>
+                    <li class="nav-item"><a href="{{ url_for('index') }}" class="nav-link px-2 text-muted">Home</a></li>
+                    <li class="nav-item"><a href="{{ url_for('view_all_posts') }}" class="nav-link px-2 text-muted">All posts</a></li>
+                    <li class="nav-item"><a href="{{ url_for('add_user') }}" class="nav-link px-2 text-muted">Sign up</a></li>
                     <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">RSS</a></li>
                     <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>
                 </ul>
