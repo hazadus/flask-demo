@@ -7,10 +7,10 @@
 
 {% block content %}
     {%  for message in get_flashed_messages() %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          {{  message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{  message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     {%  endfor %}
 
     <!-- Carousel -->
@@ -60,45 +60,81 @@
     </div>
 
     <br/>
-    {% for post in posts %}
-        <div id="post-card">
-        {% if post.banner_pic %}
-            <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
-                 alt="{{ post.title }}"
-                 class="mw-100 rounded">
-        {% else %}
-            <img src="{{ url_for('static', filename='uploads/blog-post-placeholder.webp/') }}"
-                 alt="{{ post.title }}"
-                 class="mw-100 rounded">
-        {% endif %}
+
+    <div class="row g-5">
+        <div class="col-md-8">
+        {% for post in posts %}
+            <div id="post-card">
+            {% if post.banner_pic %}
+                <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
+                     alt="{{ post.title }}"
+                     class="mw-100 rounded">
+            {% else %}
+                <img src="{{ url_for('static', filename='uploads/blog-post-placeholder.webp/') }}"
+                     alt="{{ post.title }}"
+                     class="mw-100 rounded">
+            {% endif %}
+            </div>
+
+            <div class="shadow-lg p-3 mb-5 bg-body rounded">
+                <h3>{{ post.title }}</h3>
+                <p>
+                    {{ display_author_and_views(post) }}
+                <br/>
+                    {{ display_tags(post) }}
+                </p>
+                <p>
+                    <i>{{ post.summary }}</i>
+                </p>
+                <a class="btn btn-outline-primary btn-sm" href="{{ url_for('view_post_by_slug', post_slug=post.slug) }}"
+                   role="button">
+                    View post
+                </a>
+                {% if current_user.is_authenticated %}
+                    {% if post.author.id == current_user.id or current_user.is_admin %}
+                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('edit_post', post_id=post.id) }}"
+                       role="button">
+                        Edit post
+                    </a>
+                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_post', post_id=post.id) }}"
+                       role="button">
+                        Delete post
+                    </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endfor %}
         </div>
 
-        <div class="shadow-lg p-3 mb-5 bg-body rounded">
-            <h3>{{ post.title }}</h3>
-            <p>
-                {{ display_author_and_views(post) }}
-            <br/>
-                {{ display_tags(post) }}
-            </p>
-            <p>
-                <i>{{ post.summary }}</i>
-            </p>
-            <a class="btn btn-outline-primary btn-sm" href="{{ url_for('view_post_by_slug', post_slug=post.slug) }}"
-               role="button">
-                View post
-            </a>
-            {% if current_user.is_authenticated %}
-                {% if post.author.id == current_user.id or current_user.is_admin %}
-                <a class="btn btn-outline-primary btn-sm" href="{{ url_for('edit_post', post_id=post.id) }}"
-                   role="button">
-                    Edit post
-                </a>
-                <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_post', post_id=post.id) }}"
-                   role="button">
-                    Delete post
-                </a>
-                {% endif %}
-            {% endif %}
+        <!-- Right column -->
+        <div class="col-md-4">
+            <div class="position-sticky" style="top: 5rem;">
+                <div class="p-4 mb-3 bg-light rounded">
+                    <h4 class="fst-italic">About</h4>
+                    <p class="mb-0">
+                        This site was initially created to try out <b>Flask</b> capatibilities as a blog platform.
+                        You can check it's source code on <a href="https://github.com/hazadus/flask-demo">GitHub</a>
+                        if you like so.
+                        Any <a href="https://github.com/hazadus/flask-demo/issues">issues</a>, questions or forks are
+                        highly welcome, see my contacts below.
+                        As for content, I tend to post here short notes about my adventures on the way of Python
+                        learning.
+                    </p>
+                </div>
+
+                <div class="p-4">
+                    <h4 class="fst-italic">Tags</h4>
+                </div>
+
+                <div class="p-4">
+                    <h4 class="fst-italic">Get in touch</h4>
+                    <ol class="list-unstyled">
+                        <li><a href="https://github.com/hazadus">GitHub</a></li>
+                        <li><a href="https://hazadus.t.me">Telegram</a></li>
+                        <li><a href="https://lopsided-age-3b1.notion.site/93e5c3de7e2d4c4c947234a3f1bf01d2?v=8b2633ab864a484eae0288de6cfea7c7">Dev Roadmap</a></li>
+                    </ol>
+                </div>
+            </div>
         </div>
-    {% endfor %}
+    </div>
 {% endblock %}
