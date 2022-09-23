@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from 'macros.html' import display_tags, display_author_and_views %}
+{% from 'macros.html' import display_post_tags, display_author_and_views, display_tags %}
 {% block title %}View all posts{% endblock %}
 {% block style %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/post.css') }}">
@@ -81,7 +81,7 @@
                 <p>
                     {{ display_author_and_views(post) }}
                 <br/>
-                    {{ display_tags(post) }}
+                    {{ display_post_tags(post) }}
                 </p>
                 <p>
                     <i>{{ post.summary }}</i>
@@ -124,6 +124,7 @@
 
                 <div class="p-4">
                     <h4 class="fst-italic">Tags</h4>
+                    {{ display_tags(tags) }}
                 </div>
 
                 <div class="p-4">

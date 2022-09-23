@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from 'macros.html' import display_tags, display_author_and_views %}
+{% from 'macros.html' import display_post_tags, display_author_and_views %}
 {% block title %}{{ post.title }}{% endblock %}
 {% block style %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/post.css') }}">
@@ -33,7 +33,7 @@
         <p>
             {{ display_author_and_views(post) }}
             <br/>
-            {{ display_tags(post) }}
+            {{ display_post_tags(post) }}
         </p>
         <p>
             <i>{{ post.summary }}</i>

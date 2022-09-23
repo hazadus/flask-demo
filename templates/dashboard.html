@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from 'macros.html' import display_tags, display_author_and_views %}
+{% from 'macros.html' import display_post_tags, display_author_and_views %}
 {% block title %}Dashboard{% endblock %}
 {% block style %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/post.css') }}">
@@ -101,7 +101,7 @@ Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
                             {% endif %}
                                 <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
                             <br/>
-                                {{ display_tags(post) }}
+                                {{ display_post_tags(post) }}
                             </td>
                             <td>
                                 {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}

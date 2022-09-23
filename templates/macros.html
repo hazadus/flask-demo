@@ -1,4 +1,4 @@
-{% macro display_tags(post) %}
+{% macro display_post_tags(post) %}
         {% if post.tags %}
             <div class="tags small">
             &#x1F3F7;
@@ -7,6 +7,14 @@
             {% endfor %}
             </div>
         {% endif %}
+{% endmacro %}
+
+{% macro display_tags(tags) %}
+    <div class="tags">
+    {% for tag in tags %}
+        <a title="{{ tag.name }}" href="#" class="color5">{{ tag.name }}</a>
+    {% endfor %}
+    </div>
 {% endmacro %}
 
 {% macro display_author_and_views(post) %}

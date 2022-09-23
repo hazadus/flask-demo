@@ -382,7 +382,8 @@ def view_all_posts() -> str:
     """Show 'All posts' section."""
     posts = Posts.query.filter_by(is_draft=False)
     posts = posts.order_by(Posts.date_posted.desc())
-    return render_template('posts.html', posts=posts)
+    tags = Tags.query.order_by(Tags.name)
+    return render_template('posts.html', posts=posts, tags=tags)
 
 
 @app.route('/posts/<int:post_id>')
