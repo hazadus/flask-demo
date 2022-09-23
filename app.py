@@ -53,6 +53,7 @@ sentry_sdk.init(
 # Configure Flask app
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog_data.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = config.FLASK_CSRF
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 app.config['CKEDITOR_ENABLE_CODESNIPPET'] = True
@@ -101,7 +102,21 @@ class Users(db.Model, UserMixin):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return '<Name %r>' % self.name
+        return f'<User {self.name}>'
+
+
+class Tags(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32))
+
+    def __repr__(self):
+        return f'<Tag "{self.name}">'
+
+
+post_tag = db.Table('post_tag',
+                    db.Column('post_id', db.Integer, db.ForeignKey('posts.id')),
+                    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'))
+                    )
 
 
 class Posts(db.Model):
@@ -115,8 +130,12 @@ class Posts(db.Model):
     date_posted = db.Column(db.DateTime, default=datetime.now())
     is_draft = db.Column(db.Boolean, default=False)
     views_count = db.Column(db.Integer, default=0)
-    # Foreign key to link users (refer to primary key of the user)
+    # Foreign key to link users (refer to primary key of the user), and tags
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    tags = db.relationship('Tags', secondary=post_tag, backref='posts')
+
+    def __repr__(self):
+        return f'<Post "{self.title}">'
 
 
 class SearchForm(FlaskForm):

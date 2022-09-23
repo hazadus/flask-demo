@@ -1,33 +1,8 @@
 {% extends 'base.html' %}
+{% from 'macros.html' import display_tags, display_author_and_views %}
 {% block title %}View all posts{% endblock %}
 {% block style %}
-    <style>
-    #posts-carousel .carousel-item img {
-        object-fit: cover;
-        object-position: center;
-        height: 40vh;
-        overflow: hidden;
-    }
-
-    #posts-carousel .carousel-item:before {
-        content: "";
-        background-image:
-        linear-gradient(
-            to bottom,
-            transparent, rgba(0, 0, 0, 1));
-        display: block;
-        position: absolute;
-        top: 0;
-        width: 100vw;
-        height: 100vh;
-    }
-
-    #post-card img {
-        width: 100%;
-        height: 100px;
-        object-fit: cover;
-    }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/post.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -100,14 +75,13 @@
 
         <div class="shadow-lg p-3 mb-5 bg-body rounded">
             <h3>{{ post.title }}</h3>
-            <i class="text-muted">
-                &#x1F4CC; by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
-                &#x1F440; {{ post.views_count }} views
-            </i>
-            <br/>
-            <br/>
             <p>
-                {{ post.content|safe }}
+                {{ display_author_and_views(post) }}
+            <br/>
+                {{ display_tags(post) }}
+            </p>
+            <p>
+                <i>{{ post.summary }}</i>
             </p>
             <a class="btn btn-outline-primary btn-sm" href="{{ url_for('view_post_by_slug', post_slug=post.slug) }}"
                role="button">

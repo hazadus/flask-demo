@@ -1,0 +1,17 @@
+{% macro display_tags(post) %}
+        {% if post.tags %}
+            <div class="tags small">
+            &#x1F3F7;
+            {% for tag in post.tags %}
+                <a title="{{ tag.name }}" href="#" class="color2">{{ tag.name }}</a>
+            {% endfor %}
+            </div>
+        {% endif %}
+{% endmacro %}
+
+{% macro display_author_and_views(post) %}
+<i class="text-muted">
+    &#x1F4CC; by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
+    &#x1F440; {{ post.views_count }} views
+</i>
+{% endmacro %}

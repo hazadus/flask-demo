@@ -1,17 +1,14 @@
 {% extends 'base.html' %}
+{% from 'macros.html' import display_tags, display_author_and_views %}
 {% block title %}{{ post.title }}{% endblock %}
 {% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/post.css') }}">
     <style>
-    #post-card img {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
     </style>
 {% endblock %}
 {% block content %}
     {% if post.banner_pic %}
-        <div id="post-card">
+        <div id="post-card-tall">
             <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
                  class="mw-100">
         </div>
@@ -33,12 +30,14 @@
         {% if post.is_draft %}
             <span class="badge rounded-pill text-bg-success">Draft</span>
         {% endif %}
-        <i class="text-muted">
-            &#x1F4CC; by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
-            &#x1F440; {{ post.views_count }} views
-        </i>
-        <br/>
-        <br/>
+        <p>
+            {{ display_author_and_views(post) }}
+            <br/>
+            {{ display_tags(post) }}
+        </p>
+        <p>
+            <i>{{ post.summary }}</i>
+        </p>
         <p>
             {{ post.content|safe }}
         </p>
@@ -70,7 +69,7 @@
             *  https://disqus.com/admin/universalcode/#configuration-variables    */
 
             var disqus_config = function () {
-            this.page.url = "http://www.hazadus.ru{{ url_for('view_post', post_id=post.id) }}";
+            this.page.url = "https://www.hazadus.ru{{ url_for('view_post', post_id=post.id) }}";
             this.page.identifier = {{ post.id }};
             };
 
