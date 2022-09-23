@@ -193,7 +193,11 @@ def index():
 @login_required
 def admin():
     all_users = Users.query.order_by(Users.date_added)
-    return render_template('admin.html', all_users=all_users)
+    uploads_dir = os.path.dirname(app.instance_path) + '/static/uploads'
+    uploads = [[file, os.stat(os.path.join(uploads_dir, file)).st_size]
+               for file in os.listdir(uploads_dir)]
+    uploads.sort()
+    return render_template('admin.html', all_users=all_users, uploads=uploads)
 
 
 @app.route('/debug-sentry')

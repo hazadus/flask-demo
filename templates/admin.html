@@ -50,6 +50,16 @@
             </tbody>
         </table>
         </div>
+
+        <h3>Manage uploads</h3>
+        <br/>
+        <div class="shadow-lg p-3 mb-5 bg-body rounded">
+        {% for file in uploads %}
+            {% if file[0] != '.DS_Store' %}
+                <a href="{{ url_for('static', filename='uploads/' + file[0]) }}">{{ file[0] }}</a> - {{ file[1] }} bytes<br/>
+            {% endif %}
+        {% endfor %}
+        </div>
     {% else %}
         <p>You have no admin rights, sorry.</p>
     {% endif %}
