@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from 'macros.html' import display_tags, display_author_and_views %}
 {% block title %}View all posts{% endblock %}
 {% block style %}
     <style>
@@ -100,14 +101,13 @@
 
         <div class="shadow-lg p-3 mb-5 bg-body rounded">
             <h3>{{ post.title }}</h3>
-            <i class="text-muted">
-                &#x1F4CC; by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
-                &#x1F440; {{ post.views_count }} views
-            </i>
-            <br/>
-            <br/>
             <p>
-                {{ post.content|safe }}
+                {{ display_author_and_views(post) }}
+            <br/>
+                {{ display_tags(post) }}
+            </p>
+            <p>
+                <i>{{ post.summary }}</i>
             </p>
             <a class="btn btn-outline-primary btn-sm" href="{{ url_for('view_post_by_slug', post_slug=post.slug) }}"
                role="button">

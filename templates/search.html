@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from 'macros.html' import display_tags, display_author_and_views %}
 {% block title %}Search - {{ search_query }}{% endblock %}
 {% block style %}
     <style>
@@ -46,10 +47,9 @@
                                 </h5>
                                 <p class="card-text">{{ post.summary }}</p>
                                 <p class="card-text">
-                                    <small class="text-muted">
-                                        &#x1F4CC; by {{ post.author.name }} on {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
-                                        &#x1F440; {{ post.views_count }} views
-                                    </small>
+                                    {{ display_author_and_views(post) }}
+                                    <br/>
+                                    {{ display_tags(post) }}
                                 </p>
                             </div>
                         </div>
