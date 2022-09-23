@@ -391,10 +391,14 @@ def view_post(post_id: int) -> str:
     post = Posts.query.get_or_404(post_id)
     # if post.is_draft:  # TODO: make admin or post author able to view drafts
     #     abort(404)
-    post.views_count += 1
-    db.session.add(post)  # Update DB with changed post
-    db.session.commit()
-    return render_template('post.html', post=post)
+    similar_posts = Posts.query.join(Tags.posts).filter(Tags.id.in_(tag.id for tag in post.tags)).all()
+    tags = Tags.query.order_by(Tags.name)
+
+    if not post.is_draft:
+        post.views_count += 1
+        db.session.add(post)  # Update DB with changed post
+        db.session.commit()
+    return render_template('post.html', post=post, similar_posts=similar_posts, tags=tags)
 
 
 @app.route('/post/<string:post_slug>')
@@ -402,10 +406,14 @@ def view_post_by_slug(post_slug: str) -> str:
     post = Posts.query.filter(Posts.slug == post_slug).first_or_404()
     # if post.is_draft:  # TODO: make admin or post author able to view drafts
     #     abort(404)
-    post.views_count += 1
-    db.session.add(post)  # Update DB with changed post
-    db.session.commit()
-    return render_template('post.html', post=post)
+    similar_posts = Posts.query.join(Tags.posts).filter(Tags.id.in_(tag.id for tag in post.tags)).all()
+    tags = Tags.query.order_by(Tags.name)
+
+    if not post.is_draft:
+        post.views_count += 1
+        db.session.add(post)  # Update DB with changed post
+        db.session.commit()
+    return render_template('post.html', post=post, similar_posts=similar_posts, tags=tags)
 
 
 @app.route('/posts/edit/<int:post_id>', methods=['GET', 'POST'])

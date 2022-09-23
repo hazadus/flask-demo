@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from 'macros.html' import display_post_tags, display_author_and_views %}
+{% from 'macros.html' import display_post_tags, display_author_and_views, display_tags %}
 {% block title %}{{ post.title }}{% endblock %}
 {% block style %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/post.css') }}">
@@ -14,8 +14,8 @@
         </div>
     {% endif %}
 
-<div class="row">
-    <div class="col-sm-8">
+<div class="row g-5">
+    <div class="col-md-8">
     {%  for message in get_flashed_messages() %}
         <div class="alert alert-success alert-dismissible fade show" role="alert">
           {{  message }}
@@ -87,13 +87,26 @@
         </div>
     </div>
     {% endif %}
-<div class="col-sm-4">
-    <div class="shadow-lg p-3 mb-5 bg-body">
-        About this blog<br/>
-        More posts<br/>
-        Archive<br/>
-        Other stuff...
+    <div class="col-md-4">
+        <div class="position-sticky" style="top: 5rem;">
+            <div class="p-4 mb-3 bg-light rounded">
+                <h4 class="fst-italic">More like this</h4>
+                <ol class="list-unstyled">
+                {% for similar_post in similar_posts %}
+                    {% if similar_post.id != post.id %}
+                        <li style="margin-bottom: 6px;">
+                            <a href="{{ url_for('view_post_by_slug', post_slug=similar_post.slug) }}">{{ similar_post.title }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                </ol>
+            </div>
+
+            <div class="p-4">
+                <h4 class="fst-italic">Tags</h4>
+                {{ display_tags(tags) }}
+            </div>
+        </div>
     </div>
-</div>
 </div>
 {% endblock %}
