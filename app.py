@@ -470,6 +470,16 @@ def delete_post(post_id: int) -> str:
         return render_template('posts.html', posts=posts)
 
 
+@app.route('/posts/tag/<string:tag_name>')
+def view_tag_posts(tag_name: str) -> str:
+    tag = Tags.query.filter(Tags.name == tag_name).first()
+
+    if not tag:
+        abort(404)
+
+    posts = Posts.query.filter(Posts.tags.contains(tag))
+    return render_template('tag_posts.html', tag=tag, posts=posts)
+
 @app.route('/date')
 def get_current_date() -> dict:
     """Sample JSON API implementation for test purposes."""

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import display_post_tags, display_author_and_views, display_tags, display_found_posts %}
+{% block title %}View all posts tagged as {{ tag.name }}{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/post.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h3>All posts tagged <i>{{ tag.name }}</i></h3>
+    <br/>
+    <br/>
+    {{ display_found_posts(posts) }}
+{% endblock %}

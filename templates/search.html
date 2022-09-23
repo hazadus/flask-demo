@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from 'macros.html' import display_post_tags, display_author_and_views %}
+{% from 'macros.html' import display_post_tags, display_author_and_views, display_found_posts %}
 {% block title %}Search - {{ search_query }}{% endblock %}
 {% block style %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/post.css') }}">
@@ -19,39 +19,7 @@
         <b>Search results:</b>
         <br/>
         <br/>
-        <div class="card" style="width: 100%;">
-            <ul class="list-group list-group-flush">
-            {% for post in search_results %}
-                <div class="card mb-3" style="">
-                    <div class="row g-0">
-                        <div class="col-md-4" id="post-card-tall">
-                            {% if post.banner_pic %}
-                            <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
-                                 class="img-fluid rounded-start" alt="{{ post.title }}">
-                            {% else %}
-                            <img src="{{ url_for('static', filename='uploads/blog-post-placeholder.webp') }}"
-                                 class="img-fluid rounded-start" alt="{{ post.title }}">
-                            {% endif %}
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    &#x1F4C4;
-                                    <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
-                                </h5>
-                                <p class="card-text">{{ post.summary }}</p>
-                                <p class="card-text">
-                                    {{ display_author_and_views(post) }}
-                                    <br/>
-                                    {{ display_post_tags(post) }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-            </ul>
-        </div>
+        {{ display_found_posts(search_results) }}
     {% else %}
         Sorry, found nothing.
     {% endif %}
