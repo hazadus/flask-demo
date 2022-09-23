@@ -2,17 +2,13 @@
 {% from 'macros.html' import display_tags, display_author_and_views %}
 {% block title %}{{ post.title }}{% endblock %}
 {% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/post.css') }}">
     <style>
-    #post-card img {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
     </style>
 {% endblock %}
 {% block content %}
     {% if post.banner_pic %}
-        <div id="post-card">
+        <div id="post-card-tall">
             <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
                  class="mw-100">
         </div>
@@ -34,10 +30,14 @@
         {% if post.is_draft %}
             <span class="badge rounded-pill text-bg-success">Draft</span>
         {% endif %}
+        <p>
             {{ display_author_and_views(post) }}
-        <br/>
+            <br/>
             {{ display_tags(post) }}
-        <br/>
+        </p>
+        <p>
+            <i>{{ post.summary }}</i>
+        </p>
         <p>
             {{ post.content|safe }}
         </p>
