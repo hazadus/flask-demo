@@ -11,114 +11,40 @@ Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
 -->
 
 {% block content %}
-    {%  for message in get_flashed_messages() %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          {{  message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="row g-5">
+        <div class="col-md-3">
+            <div class="position-sticky" style="top: 5rem;">
+                <!-- Left block - dashboard menu -->
+                <div class="p-4 mb-3 bg-light rounded">
+                    <h4 class="fst-italic">&#x1F4CA; Dashboard</h4>
+                    <ul class="list-unstyled">
+                        <li>&#128100; <a href="{{ url_for('dashboard_user') }}">User Profile</a></li>
+                        <li>&#x1F4C4; <a href="{{ url_for('dashboard_posts') }}">Posts</a></li>
+                        <li>&#128466; Drafts</li>
+                    </ul>
+                    {% if current_user.is_admin %}
+                    <br/>
+                    <h4 class="fst-italic">&#x1F6E0; Admin</h4>
+                    <ul class="list-unstyled">
+                        <li>&#128101; <a href="{{ url_for('dashboard_users') }}">Users</a></li>
+                        <li>&#x1F3F7; Tags</li>
+                        <li>&#128450; <a href="{{ url_for('dashboard_uploads') }}">Uploaded Files</a></li>
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    {%  endfor %}
 
-        <h2>Dashboard</h2>
-        <br/>
-        <div class="shadow-lg p-3 mb-5 bg-body rounded">
-            <div class="card">
-                <div class="card-header">
-                    User id#{{ current_user.id }}
-                </div>
-                <div class="card-body">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-8">
-                                <h5 class="card-title">{{ current_user.name }}</h5>
-                                <p class="card-text">
-                                <b>@{{ current_user.username }}</b>
-                                {% if current_user.is_admin %}
-                                <span class="badge rounded-pill text-bg-success">Admin</span>
-                                {% endif %}
-                                <br/>
-                                <a href="mailto:{{ current_user.email }}">{{ current_user.email }}</a><br/>
-                                {{ current_user.favorite_color }}<br/>
-                                <b>Joined on:</b> {{ current_user.date_added.strftime('%d %b %Y, %H:%M') }}<br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <a class="btn btn-outline-danger btn-sm" href="{{ url_for('logout') }}" role="button">
-                                    Log out
-                                </a>
-                                <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update_user', user_id=current_user.id) }}"
-                                   role="button">
-                                    Edit profile
-                                </a>
-                                <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_user', user_id=current_user.id) }}"
-                                   role="button">
-                                    Delete
-                                </a>
-                            </div>
-                            <div class="col-4">
-                                {% if current_user.profile_pic %}
-                                    <img src="{{ url_for('static', filename='uploads/'+current_user.profile_pic) }}"
-                                        class="img-thumbnail rounded float-end">
-                                {% else %}
-                                    <img src="{{ url_for('static', filename='images/default-profile-pic.png') }}"
-                                        height="200" width="200" align="right">
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </p>
-                </div>
+        <div class="col-md-9">
+            {%  for message in get_flashed_messages() %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              {{  message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            {%  endfor %}
+
+            {% block dashboard %}
+            {% endblock %}
         </div>
-        <h3>Your posts</h3>
-        <br/>
-            <div class="shadow-lg p-3 mb-5 bg-body rounded">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col"width="1%">#id</th>
-                        <th scope="col">Title</th>
-                        <th scope="col" width="15%">Date Posted</th>
-                        <th scope="col" width="15%">Actions</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody class="table-group-divider">
-                    {% for post in posts %}
-                        {% if post.is_draft %}
-                        <tr class="table-info">
-                        {% else %}
-                        <tr>
-                        {%  endif %}
-                            <td>
-                                {{ post.id }}
-                            </td>
-                            <td>
-                            {% if post.is_draft %}
-                                <span class="badge rounded-pill text-bg-success">Draft</span>
-                            {% endif %}
-                                <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
-                            <br/>
-                                {{ display_post_tags(post) }}
-                            </td>
-                            <td>
-                                {{ post.date_posted.strftime('%d %b %Y, %H:%M') }}
-                            </td>
-                            <td>
-                                 <a class="btn btn-outline-primary btn-sm" href="{{ url_for('edit_post', post_id=post.id) }}"
-                                           role="button">
-                                     Edit
-                                </a>
-                                 <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_post', post_id=post.id) }}"
-                                           role="button">
-                                     Delete
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            </div>
+    </div>
 {% endblock %}

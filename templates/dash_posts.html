@@ -1,0 +1,47 @@
+{% extends 'dashboard.html' %}
+
+{% block dashboard %}
+<h2>Your Posts</h2>
+<br/>
+    <div class="shadow-lg p-3 mb-5 bg-body rounded">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col" width="20%">Actions</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            {% for post in posts %}
+                {% if post.is_draft %}
+                <tr class="table-info">
+                {% else %}
+                <tr>
+                {%  endif %}
+                    <td>
+                    {% if post.is_draft %}
+                        <span class="badge rounded-pill text-bg-success">Draft</span>
+                    {% endif %}
+                        <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
+                        <br/>
+                        {{ display_author_and_views(post) }}
+                        <br/>
+                        {{ display_post_tags(post) }}
+                    </td>
+                    <td>
+                         <a class="btn btn-outline-primary btn-sm" href="{{ url_for('edit_post', post_id=post.id) }}"
+                                   role="button">
+                             Edit
+                        </a>
+                         <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_post', post_id=post.id) }}"
+                                   role="button">
+                             Delete
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% endblock %}

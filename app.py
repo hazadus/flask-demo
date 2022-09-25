@@ -189,17 +189,6 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/admin')
-@login_required
-def admin():
-    all_users = Users.query.order_by(Users.date_added)
-    uploads_dir = os.path.dirname(app.instance_path) + '/static/uploads'
-    uploads = [[file, os.stat(os.path.join(uploads_dir, file)).st_size]
-               for file in os.listdir(uploads_dir)]
-    uploads.sort()
-    return render_template('admin.html', all_users=all_users, uploads=uploads)
-
-
 @app.route('/debug-sentry')
 @login_required
 def trigger_error():
@@ -249,10 +238,45 @@ def search():  # TODO: validate data required
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required  # Redirect to Login page if user is not logged in
 def dashboard() -> str:
+    return render_template('dash_user.html')
+
+
+@app.route('/dashboard/user', methods=['GET', 'POST'])
+@login_required
+def dashboard_user() -> str:
     # TODO: move update profile stuff here.
     # Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
+    return render_template('dash_user.html')
+
+
+@app.route('/dashboard/posts', methods=['GET', 'POST'])
+@login_required
+def dashboard_posts() -> str:
     posts = Posts.query.filter(Posts.author_id == current_user.id).order_by(Posts.date_posted.desc())
-    return render_template('dashboard.html', posts=posts)
+    return render_template('dash_posts.html', posts=posts)
+
+
+@app.route('/dashboard/users', methods=['GET', 'POST'])
+@login_required
+def dashboard_users() -> str:
+    if not current_user.is_admin:
+        abort(404)
+
+    all_users = Users.query.order_by(Users.date_added).all()
+    return render_template('dash_users.html', all_users=all_users)
+
+
+@app.route('/dashboard/uploads', methods=['GET', 'POST'])
+@login_required
+def dashboard_uploads() -> str:
+    if not current_user.is_admin:
+        abort(404)
+
+    uploads_dir = os.path.dirname(app.instance_path) + '/static/uploads'
+    uploads = [[file, os.stat(os.path.join(uploads_dir, file)).st_size]
+               for file in os.listdir(uploads_dir)]
+    uploads.sort()
+    return render_template('dash_uploads.html', uploads=uploads)
 
 
 @app.route('/user/add', methods=['GET', 'POST'])
@@ -336,10 +360,10 @@ def delete_user(user_id: int) -> str:
             db.session.commit()
             flash('User deleted successfully.')
 
-            return render_template('admin.html', all_users=all_users)
+            return render_template('dash_users.html', all_users=all_users)
         except:
             flash('There was a problem deleting user, please try again!')
-            return render_template('admin.html', all_users=all_users)
+            return render_template('dash_users.html', all_users=all_users)
     else:
         flash('Only admins can delete user accounts!')
         return render_template('dashboard.html')

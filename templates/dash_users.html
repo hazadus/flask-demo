@@ -1,0 +1,42 @@
+{% extends 'dashboard.html' %}
+
+{% block dashboard %}
+<h2>Manage Users</h2>
+<br/>
+<div class="shadow-lg p-3 mb-5 bg-body rounded">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Username / Name / id</th>
+                <th scope="col">Email</th>
+                <th scope="col">Added</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+    {% for user in all_users %}
+        <tr>
+            <td>
+                @{{ user.username }}<br/>
+                {{ user.name }}<br/>
+                #{{ user.id }}
+                {% if user.is_admin %}
+                <span class="badge rounded-pill text-bg-success">Admin</span>
+                {% endif %}
+            </td>
+            <td>{{ user.email }}</td>
+            <td>
+                {{ user.date_added.strftime('%d.%m.%Y %H:%M') }}
+            </td>
+            <td>
+                <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update_user', user_id=user.id) }}"
+                   role="button">Edit</a>
+                <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_user', user_id=user.id) }}"
+                   role="button">Delete</a>
+            </td>
+        </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

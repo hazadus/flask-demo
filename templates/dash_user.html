@@ -1,0 +1,58 @@
+{% extends 'dashboard.html' %}
+
+{% block dashboard %}
+<h2>Your Profile</h2>
+<br/>
+<div class="shadow-lg p-3 mb-5 bg-body rounded">
+    <div class="card">
+        <div class="card-header">
+            User id#{{ current_user.id }}
+        </div>
+        <div class="card-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-8">
+                        <h5 class="card-title">{{ current_user.name }}</h5>
+                        <p class="card-text">
+                        <b>@{{ current_user.username }}</b>
+                        {% if current_user.is_admin %}
+                        <span class="badge rounded-pill text-bg-success">Admin</span>
+                        {% endif %}
+                        <br/>
+                        <a href="mailto:{{ current_user.email }}">{{ current_user.email }}</a><br/>
+                        {{ current_user.favorite_color }}<br/>
+                        <b>Joined on:</b> {{ current_user.date_added.strftime('%d %b %Y, %H:%M') }}<br/>
+                        <b>Posts created:</b> XX<br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <a class="btn btn-outline-danger btn-sm" href="{{ url_for('logout') }}" role="button">
+                            Log out
+                        </a>
+                        <a class="btn btn-outline-primary btn-sm" href="{{ url_for('update_user', user_id=current_user.id) }}"
+                           role="button">
+                            Edit profile
+                        </a>
+                        <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_user', user_id=current_user.id) }}"
+                           role="button">
+                            Delete
+                        </a>
+                    </div>
+                    <div class="col-4">
+                        {% if current_user.profile_pic %}
+                            <img src="{{ url_for('static', filename='uploads/'+current_user.profile_pic) }}"
+                                class="img-thumbnail rounded float-end">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/default-profile-pic.png') }}"
+                                height="200" width="200" align="right">
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

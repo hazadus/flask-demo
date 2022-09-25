@@ -1,0 +1,30 @@
+{% extends 'dashboard.html' %}
+
+{% block dashboard %}
+<h2>Manage Uploaded Files</h2>
+<br/>
+<div class="shadow-lg p-3 mb-5 bg-body rounded">
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th scope="col">Filename</th>
+            <th scope="col">Size, bytes</th>
+        </tr>
+    </thead>
+    <tbody class="table-group-divider">
+        {% for file in uploads %}
+            {% if file[0] != '.DS_Store' %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('static', filename='uploads/' + file[0]) }}">{{ file[0] }}</a>
+                    </td>
+                    <td>
+                        {{ '{:,d}'.format(file[1]) }}
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
