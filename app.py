@@ -386,19 +386,10 @@ def view_all_posts() -> str:
     return render_template('posts.html', posts=posts, tags=tags)
 
 
-@app.route('/posts/<int:post_id>')
-def view_post(post_id: int) -> str:
+@app.route('/post/<int:post_id>')
+def view_post(post_id: int):
     post = Posts.query.get_or_404(post_id)
-    # if post.is_draft:  # TODO: make admin or post author able to view drafts
-    #     abort(404)
-    similar_posts = Posts.query.join(Tags.posts).filter(Tags.id.in_(tag.id for tag in post.tags)).all()
-    tags = Tags.query.order_by(Tags.name)
-
-    if not post.is_draft:
-        post.views_count += 1
-        db.session.add(post)  # Update DB with changed post
-        db.session.commit()
-    return render_template('post.html', post=post, similar_posts=similar_posts, tags=tags)
+    return redirect(url_for('view_post_by_slug', post_slug=post.slug))
 
 
 @app.route('/post/<string:post_slug>')
@@ -406,14 +397,20 @@ def view_post_by_slug(post_slug: str) -> str:
     post = Posts.query.filter(Posts.slug == post_slug).first_or_404()
     # if post.is_draft:  # TODO: make admin or post author able to view drafts
     #     abort(404)
-    similar_posts = Posts.query.join(Tags.posts).filter(Tags.id.in_(tag.id for tag in post.tags)).all()
+    similar_posts = Posts.query.join(Tags.posts).filter \
+        (Tags.id.in_(tag.id for tag in post.tags)).filter(Posts.id != post.id).all()
     tags = Tags.query.order_by(Tags.name)
+    most_viewed_posts = Posts.query.order_by(Posts.views_count.desc()).limit(3).all()
 
     if not post.is_draft:
         post.views_count += 1
         db.session.add(post)  # Update DB with changed post
         db.session.commit()
-    return render_template('post.html', post=post, similar_posts=similar_posts, tags=tags)
+    return render_template('post.html',
+                           post=post,
+                           similar_posts=similar_posts,
+                           tags=tags,
+                           most_viewed_posts=most_viewed_posts)
 
 
 @app.route('/posts/edit/<int:post_id>', methods=['GET', 'POST'])
@@ -487,6 +484,7 @@ def view_tag_posts(tag_name: str) -> str:
 
     posts = Posts.query.filter(Posts.tags.contains(tag))
     return render_template('tag_posts.html', tag=tag, posts=posts)
+
 
 @app.route('/date')
 def get_current_date() -> dict:

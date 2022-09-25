@@ -8,103 +8,121 @@
 {% endblock %}
 {% block content %}
     {% if post.banner_pic %}
-        <div id="post-card-tall">
-            <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
-                 class="mw-100">
-        </div>
+    <div id="post-card-tall">
+        <img src="{{ url_for('static', filename='uploads/' + post.banner_pic) }}"
+             class="mw-100">
+    </div>
     {% endif %}
 
 <div class="row g-5">
+    <!-- Left (wide) column -->
     <div class="col-md-8">
-    {%  for message in get_flashed_messages() %}
+        {%  for message in get_flashed_messages() %}
         <div class="alert alert-success alert-dismissible fade show" role="alert">
           {{  message }}
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    {%  endfor %}
+        {%  endfor %}
 
-    <!-- https://www.digitalocean.com/community/tutorials/css-cropping-images-object-fit -->
-
-    <div class="shadow-lg p-3 mb-5 bg-body">
-        <h3>{{ post.title }}</h3>
-        {% if post.is_draft %}
-            <span class="badge rounded-pill text-bg-success">Draft</span>
-        {% endif %}
-        <p>
-            {{ display_author_and_views(post) }}
-            <br/>
-            {{ display_post_tags(post) }}
-        </p>
-        <p>
-            <i>{{ post.summary }}</i>
-        </p>
-        <p>
-            {{ post.content|safe }}
-        </p>
-        <a class="btn btn-outline-primary btn-sm" href="{{ url_for('view_all_posts') }}"
-                   role="button">
-            Back to all posts page
-        </a>
-        {% if current_user.is_authenticated %}
-            {% if post.author.id == current_user.id or current_user.is_admin %}
-             <a class="btn btn-outline-primary btn-sm" href="{{ url_for('edit_post', post_id=post.id) }}"
+        <!-- Post body block -->
+        <div class="shadow-lg p-3 mb-5 bg-body">
+            <h3>{{ post.title }}</h3>
+            <p>
+                {% if post.is_draft %}
+                <span class="badge rounded-pill text-bg-success">Draft</span>
+                {% endif %}
+                {{ display_author_and_views(post) }}
+                <br/>
+                {{ display_post_tags(post) }}
+            </p>
+            <p>
+                <i>{{ post.summary }}</i>
+            </p>
+            <p>
+                {{ post.content|safe }}
+            </p>
+            <a class="btn btn-outline-primary btn-sm" href="{{ url_for('view_all_posts') }}"
                        role="button">
-                 Edit post
+                Back to all posts page
             </a>
-             <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_post', post_id=post.id) }}"
-                       role="button">
-                 Delete post
-            </a>
+            {% if current_user.is_authenticated %}
+                {% if post.author.id == current_user.id or current_user.is_admin %}
+                 <a class="btn btn-outline-primary btn-sm" href="{{ url_for('edit_post', post_id=post.id) }}"
+                           role="button">
+                     Edit post
+                </a>
+                 <a class="btn btn-outline-danger btn-sm" href="{{ url_for('delete_post', post_id=post.id) }}"
+                           role="button">
+                     Delete post
+                </a>
+                {% endif %}
             {% endif %}
-        {% endif %}
-    </div>
-    {% if not post.is_draft %}
-    <div class="shadow-lg p-3 mb-5 bg-body">
-        <div id="disqus_thread"></div>
-        <script>
-            /**
-            *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM
-            *  YOUR PLATFORM OR CMS.
-            *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT:
-            *  https://disqus.com/admin/universalcode/#configuration-variables    */
+        </div>
+        <!-- Comments block -->
+        <div class="shadow-lg p-3 mb-5 bg-body">
+        {% if not post.is_draft %}
+            <div id="disqus_thread"></div>
+            <script>
+                /**
+                *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM
+                *  YOUR PLATFORM OR CMS.
+                *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT:
+                *  https://disqus.com/admin/universalcode/#configuration-variables    */
 
-            var disqus_config = function () {
-            this.page.url = "https://www.hazadus.ru{{ url_for('view_post', post_id=post.id) }}";
-            this.page.identifier = {{ post.id }};
-            };
+                var disqus_config = function () {
+                this.page.url = "https://www.hazadus.ru{{ url_for('view_post', post_id=post.id) }}";
+                this.page.identifier = {{ post.id }};
+                };
 
-            (function() { // DON'T EDIT BELOW THIS LINE
-            var d = document, s = d.createElement('script');
-            s.src = 'https://hazadus.disqus.com/embed.js';
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-            })();
-        </script>
-        <noscript>
-            Please enable JavaScript to view the
-            <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
-        </noscript>
+                (function() { // DON'T EDIT BELOW THIS LINE
+                var d = document, s = d.createElement('script');
+                s.src = 'https://hazadus.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+                })();
+            </script>
+            <noscript>
+                Please enable JavaScript to view the
+                <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+            </noscript>
+            {% else %}
+                <p>Comments are disabled for post drafts.</p>
+            {% endif %}
         </div>
     </div>
-    {% endif %}
+    <!-- Right column -->
     <div class="col-md-4">
         <div class="position-sticky" style="top: 5rem;">
+            <!-- Tags block -->
             <div class="p-4 mb-3 bg-light rounded">
+                <h4 class="fst-italic">Tags</h4>
+                {{ display_tags(tags) }}
+            </div>
+
+            {% if similar_posts %}
+            <div class="p-4">
                 <h4 class="fst-italic">More like this</h4>
                 <ol class="list-unstyled">
                 {% for similar_post in similar_posts %}
-                    {% if similar_post.id != post.id %}
-                        <li style="margin-bottom: 6px;">
-                            <a href="{{ url_for('view_post_by_slug', post_slug=similar_post.slug) }}">{{ similar_post.title }}</a>
-                        </li>
-                    {% endif %}
+                    <li style="margin-bottom: 6px;">
+                        <a href="{{ url_for('view_post_by_slug', post_slug=similar_post.slug) }}">{{ similar_post.title }}</a>
+                    </li>
                 {% endfor %}
                 </ol>
             </div>
+            {% endif %}
 
+            <!-- Most viewed block -->
             <div class="p-4">
-                <h4 class="fst-italic">Tags</h4>
-                {{ display_tags(tags) }}
+                <h4 class="fst-italic">Most viewed</h4>
+                <ol class="list-unstyled">
+                {% for popular_post in most_viewed_posts %}
+                    <li style="margin-bottom: 6px;">
+                        <a href="{{ url_for('view_post_by_slug', post_slug=popular_post.slug) }}">{{ popular_post.title }}</a>
+                    </li>
+
+                {% endfor %}
+                </ol>
             </div>
         </div>
     </div>
