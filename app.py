@@ -533,7 +533,7 @@ def rss():
                  content_type='html',
                  author=post.author.username,
                  url='https://www.hazadus.ru' + url_for('view_post_by_slug', post_slug=post.slug),
-                 # updated=post.date_posted,
+                 updated=post.date_posted,
                  published=post.date_posted)
 
     return feed.get_response()
