@@ -20,12 +20,13 @@ Video #25: https://www.youtube.com/watch?v=o6YjyOt2Zhc
                     <ul class="list-unstyled">
                         <li>&#128100; <a href="{{ url_for('dashboard_user') }}">User Profile</a></li>
                         <li>&#x1F4C4; <a href="{{ url_for('dashboard_posts') }}">Posts</a></li>
-                        <li>&#128466; Drafts</li>
+                        <li>&#128466; <a href="{{ url_for('dashboard_drafts') }}">Drafts</a></li>
                     </ul>
                     {% if current_user.is_admin %}
                     <br/>
                     <h4 class="fst-italic">&#x1F6E0; Admin</h4>
                     <ul class="list-unstyled">
+                        <li>&#x1F4C4; All Posts</li>
                         <li>&#128101; <a href="{{ url_for('dashboard_users') }}">Users</a></li>
                         <li>&#x1F3F7; Tags</li>
                         <li>&#128450; <a href="{{ url_for('dashboard_uploads') }}">Uploaded Files</a></li>

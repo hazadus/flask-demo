@@ -252,8 +252,17 @@ def dashboard_user() -> str:
 @app.route('/dashboard/posts', methods=['GET', 'POST'])
 @login_required
 def dashboard_posts() -> str:
-    posts = Posts.query.filter(Posts.author_id == current_user.id).order_by(Posts.date_posted.desc())
+    posts = Posts.query.filter(db.and_(Posts.author_id == current_user.id,
+                                       Posts.is_draft == False)).order_by(Posts.date_posted.desc())
     return render_template('dash_posts.html', posts=posts)
+
+
+@app.route('/dashboard/drafts', methods=['GET', 'POST'])
+@login_required
+def dashboard_drafts() -> str:
+    posts = Posts.query.filter(db.and_(Posts.author_id == current_user.id,
+                                       Posts.is_draft == True)).order_by(Posts.date_posted.desc())
+    return render_template('dash_drafts.html', posts=posts)
 
 
 @app.route('/dashboard/users', methods=['GET', 'POST'])
