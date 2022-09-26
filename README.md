@@ -8,6 +8,7 @@ Basic web blog intended to try out Flask capatibilities..
 - `flask-login`
 - `flask-ckeditor`
 - `sentry-sdk[flask]`
+- `feedwerk`
 - Optional: `Flask-Migrate`
 - Optional: `gunicorn`
 
@@ -28,6 +29,7 @@ Basic web blog intended to try out Flask capatibilities..
 - [Sentry.io Flask Integration](https://docs.sentry.io/platforms/python/guides/flask/)
 - [Flask-login Documentation](https://flask-login.readthedocs.io/en/latest/)
 - [Flask-CKEditor Documentation](https://flask-ckeditor.readthedocs.io/en/latest/)
+- [feedwerk](https://pypi.org/project/feedwerk/)
 - [Gunicorn Docs](https://gunicorn.org/#deployment)
 
 ## Notes
