@@ -22,6 +22,7 @@ from wtforms.validators import DataRequired, EqualTo, Length
 from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from feedwerk.atom import AtomFeed, FeedEntry
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
@@ -517,6 +518,25 @@ def view_tag_posts(tag_name: str) -> str:
 
     posts = Posts.query.filter(Posts.tags.contains(tag))
     return render_template('tag_posts.html', tag=tag, posts=posts)
+
+
+@app.route('/rss/')
+def rss():
+    feed = AtomFeed(title='New Posts from hazadus.ru',
+                    feed_url=request.url, url=request.url_root)
+    posts = Posts.query.filter_by(is_draft=False)
+    posts = posts.order_by(Posts.date_posted.desc())
+
+    for post in posts:
+        feed.add(post.title,
+                 post.summary,  # post.content,
+                 content_type='html',
+                 author=post.author.username,
+                 url='https://www.hazadus.ru' + url_for('view_post_by_slug', post_slug=post.slug),
+                 # updated=post.date_posted,
+                 published=post.date_posted)
+
+    return feed.get_response()
 
 
 @app.route('/date')
