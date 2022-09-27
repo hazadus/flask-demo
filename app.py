@@ -282,7 +282,7 @@ def dashboard_uploads() -> str:
     if not current_user.is_admin:
         abort(404)
 
-    uploads_dir = os.path.dirname(app.instance_path) + '/static/uploads'
+    uploads_dir = os.path.abspath(os.path.join('static', 'uploads'))
     uploads = [[file, os.stat(os.path.join(uploads_dir, file)).st_size]
                for file in os.listdir(uploads_dir)]
     uploads.sort()
