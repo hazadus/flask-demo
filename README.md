@@ -31,6 +31,7 @@ Basic web blog intended to try out Flask capatibilities..
 - [Flask-CKEditor Documentation](https://flask-ckeditor.readthedocs.io/en/latest/)
 - [feedwerk](https://pypi.org/project/feedwerk/)
 - [Gunicorn Docs](https://gunicorn.org/#deployment)
+- [Store config in the environment](https://12factor.net/config)
 
 ## Notes
 - Install Sentry:
@@ -50,20 +51,23 @@ Basic web blog intended to try out Flask capatibilities..
 - - Kill process: `kill -9 PID`
 - [CodeMy Flask Fridays #9: How to use MySQL instead of sqlite](https://youtu.be/hQl2wyJvK5k)
 - Copy DB to server: `scp /Users/hazadus/PycharmProjects/flask-demo/blog_data.db root@188.225.72.155:/usr/projects/flask-demo`
+- Edit `run_app.sh` to set env vars to your values
+- `chmod a+x ./run_app.sh`
+- `./run_app.sh` to run
 
 ## Deploying on Linux with nginx and gunicorn
 Create virtualenv, clone repo from github, then:
-```
+```bash
 $ pip3 install Flask
 $ pip3 install -r requirements.txt
 ```
 Run app with gunicorn:
-```
+```bash
 $ pip3 install gunicorn
 $ gunicorn app:app -b localhost:8000 &
 ```
 Setup ngingx:
-```
+```bash
 $ sudo vim /etc/nginx/conf.d/virtual.conf
 ```
 Edit nginx config:
@@ -79,7 +83,7 @@ server {
 ```
 Proxy pass directive must be the same port on which the gunicorn process is listening.
 Restart the nginx web server.
-```
+```bash
 $ sudo nginx -t
 $ sudo service nginx restart
 ```
@@ -100,7 +104,7 @@ db.session.add(admin)
 db.session.commit()
 ```
 After adding a new column to existing DB table, we need to do the "migrate" thing. To do so, in terminal (in venv, of course):
-```
+```bash
 flask db init
 flask db stamp head
 flask db migrate -m 'Initial migration'

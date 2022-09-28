@@ -1,7 +1,8 @@
 """
-Boilerplate Flask Web Blog
+Flask Web Blog template
 
 Written by Hazadus for test and learning purposes.
+Please visit https://www.hazadus.ru for more info.
 """
 
 import uuid as uuid
@@ -26,8 +27,6 @@ from feedwerk.atom import AtomFeed, FeedEntry
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
-import config
-
 # Configure logger
 logging.basicConfig(level=logging.INFO,
                     handlers=[
@@ -40,7 +39,7 @@ logging.basicConfig(level=logging.INFO,
 
 # Configure Sentry
 sentry_sdk.init(
-    dsn=config.SENTRY_DSN,
+    dsn=os.getenv('SENTRY_DSN'),
     integrations=[
         FlaskIntegration(),
     ],
@@ -55,8 +54,8 @@ sentry_sdk.init(
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog_data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = config.FLASK_CSRF
-app.config['UPLOAD_FOLDER'] = 'static/uploads/'
+app.config['SECRET_KEY'] = os.getenv('FLASK_CSRF')
+app.config['UPLOAD_FOLDER'] = 'static/uploads/'  # TODO: convert to os.path.join, then test profile pic uploading
 app.config['CKEDITOR_ENABLE_CODESNIPPET'] = True
 
 # Init database
