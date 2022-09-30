@@ -18,12 +18,12 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, log
 from flask_ckeditor import CKEditor
 from flask_ckeditor import CKEditorField
 from flask_wtf.file import FileField
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
-from wtforms.validators import DataRequired, EqualTo, Length
+from wtforms import StringField, SubmitField, PasswordField, BooleanField
+from wtforms.validators import DataRequired, EqualTo
 from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from feedwerk.atom import AtomFeed, FeedEntry
+from feedwerk.atom import AtomFeed
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
@@ -33,22 +33,30 @@ logging.basicConfig(level=logging.INFO,
                         logging.FileHandler("log.txt"),
                         logging.StreamHandler(sys.stdout)  # output to file AND console
                     ],
-                    format="%(asctime)s - %(module)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s",
+                    format="%(asctime)s | %(levelname)s | %(module)s / %(funcName)s: %(lineno)d - %(message)s",
                     datefmt='%d/%m/%Y %H:%M:%S',
                     )
 
-# Configure Sentry
-sentry_sdk.init(
-    dsn=os.getenv('SENTRY_DSN'),
-    integrations=[
-        FlaskIntegration(),
-    ],
+# Configure Sentry, if not in development mode
+if os.getenv('FLASK_DEBUG') != '1':
+    sentry_sdk.init(
+        dsn=os.getenv('SENTRY_DSN'),
+        integrations=[
+            FlaskIntegration(),
+        ],
 
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    # We recommend adjusting this value in production.
-    traces_sample_rate=1.0
-)
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0
+
+        # By default the SDK will try to use the SENTRY_RELEASE
+        # environment variable, or infer a git commit
+        # SHA as release, however you may want to set
+        # something more human-readable.
+        # release="myapp@1.0.0",
+    )
+    logging.info('Sentry activated.')
 
 # Configure Flask app
 app = Flask(__name__)
